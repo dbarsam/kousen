@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>861</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="FilteredTree" name="treewidget" native="true"/>
+      <widget class="GLWidget" name="glwidget" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>861</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionNewScene">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/scene.png</normaloff>:/icons/scene.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Scene</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/icons/power-off.png</normaloff>:/icons/icons/power-off.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionInsertNode">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/node-add.png</normaloff>:/icons/node-add.png</iconset>
+   </property>
+   <property name="text">
+    <string>New...</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new node...</string>
+   </property>
+  </action>
+  <action name="actionRemoveNode">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/node-remove.png</normaloff>:/icons/node-remove.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Deletes the selected node.</string>
+   </property>
+  </action>
+  <action name="actionAquirePrimaryCamera">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/camera-enable.png</normaloff>:/icons/camera-enable.png</iconset>
+   </property>
+   <property name="text">
+    <string>Activate Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Select this camera as the primary camera.</string>
+   </property>
+  </action>
+  <action name="actionReleasePrimaryCamera">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/camera-disable.png</normaloff>:/icons/camera-disable.png</iconset>
+   </property>
+   <property name="text">
+    <string>Deactivate Active Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Releases the camera from being the active camera.</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GLWidget</class>
+   <extends>QWidget</extends>
+   <header>gl.glwidget</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FilteredTree</class>
+   <extends>QWidget</extends>
+   <header>ui.filteredview</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

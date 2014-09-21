@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6cfbe0c7-b1f4-4915-9b43-6adeebf1fa07}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>kousen\__main__.py</StartupFile>
+    <SearchPath>\</SearchPath>
+    <WorkingDirectory>kousen</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <InterpreterId>{a60cf3ca-66e0-4daa-bbc5-4d3c8c7e59fe}</InterpreterId>
+    <InterpreterVersion>3.3</InterpreterVersion>
+    <IsWindowsApplication>False</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="kousen\core\abstractmodel.py" />
+    <Compile Include="kousen\core\exception.py" />
+    <Compile Include="kousen\core\proxymodel.py" />
+    <Compile Include="kousen\core\__init__.py" />
+    <Compile Include="kousen\gl\glprimitive.py" />
+    <Compile Include="kousen\gl\glscene.py" />
+    <Compile Include="kousen\gl\gltransform.py" />
+    <Compile Include="kousen\math\conic.py" />
+    <Compile Include="kousen\math\matrix.py" />
+    <Compile Include="kousen\math\point.py" />
+    <Compile Include="kousen\math\vector.py" />
+    <Compile Include="kousen\math\__init__.py" />
+    <Compile Include="kousen\resources_rc.py" />
+    <Compile Include="kousen\scenegraph\camera.py" />
+    <Compile Include="kousen\scenegraph\hud.py" />
+    <Compile Include="kousen\scenegraph\primitive.py" />
+    <Compile Include="kousen\scenegraph\scene.py" />
+    <Compile Include="kousen\scenegraph\transform.py" />
+    <Compile Include="kousen\scenegraph\__init__.py" />
+    <Compile Include="kousen\ui\filteredview.py" />
+    <Compile Include="kousen\ui\linefilter.py" />
+    <Compile Include="kousen\ui\mainwindow.py" />
+    <Compile Include="kousen\ui\messagebox.py" />
+    <Compile Include="kousen\ui\itemdialog.py" />
+    <Compile Include="kousen\__init__.py" />
+    <Compile Include="kousen\__main__.py" />
+    <Compile Include="kousen\gl\glcamera.py" />
+    <Compile Include="kousen\gl\glhud.py" />
+    <Compile Include="kousen\gl\glutil.py" />
+    <Compile Include="kousen\gl\glwidget.py" />
+    <Compile Include="kousen\gl\__init__.py" />
+    <Compile Include="kousen\ui\uiloader.py" />
+    <Compile Include="kousen\ui\__init__.py" />
+    <Content Include="kousen\ui\filteredview.ui" />
+    <Content Include="kousen\ui\itemdialog.ui" />
+    <Content Include="kousen\ui\mainwindow.ui" />
+    <Content Include="kousen\ui\messagebox.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="kousen\" />
+    <Folder Include="kousen\core\" />
+    <Folder Include="kousen\gl\" />
+    <Folder Include="kousen\math\" />
+    <Folder Include="kousen\scenegraph\" />
+    <Folder Include="kousen\ui\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include=".env\">
+      <Id>{a60cf3ca-66e0-4daa-bbc5-4d3c8c7e59fe}</Id>
+      <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
+      <Version>3.3</Version>
+      <Description>_env (Python 3.3)</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <LibraryPath>Lib\</LibraryPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

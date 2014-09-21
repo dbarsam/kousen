@@ -1,0 +1,38 @@
+<RCC>
+  <qresource prefix="/">
+    <file>icons/chevron-down.png</file>
+    <file>icons/chevron-left.png</file>
+    <file>icons/chevron-right.png</file>
+    <file>icons/chevron-up.png</file>
+    <file>icons/annotation-denied.png</file>
+    <file>icons/annotation-error.png</file>
+    <file>icons/annotation-information.png</file>
+    <file>icons/annotation-question.png</file>
+    <file>icons/annotation-warning.png</file>
+    <file>icons/camera-roll.png</file>
+    <file>icons/scene.png</file>
+    <file>icons/camera.png</file>
+    <file>icons/camera-disable.png</file>
+    <file>icons/camera-dolly.png</file>
+    <file>icons/camera-enable.png</file>
+    <file>icons/camera-orbit.png</file>
+    <file>icons/camera-pan.png</file>
+    <file>icons/camera-disable.png</file>
+    <file>icons/camera-enable.png</file>
+    <file>icons/node-add.png</file>
+    <file>icons/node.png</file>
+    <file>icons/node-remove.png</file>
+    <file>icons/cancel.png</file>
+    <file>icons/delete.png</file>
+    <file>icons/refresh.png</file>
+    <file>icons/search.png</file>
+    <file>icons/hud-camera.png</file>
+    <file>icons/camera.png</file>
+    <file>icons/camera-disable.png</file>
+    <file>icons/camera-enable.png</file>
+    <file>icons/cancel.png</file>
+    <file>icons/transform-rotation.png</file>
+    <file>icons/transform-scale.png</file>
+    <file>icons/transform-translation.png</file>
+  </qresource>
+</RCC>
