@@ -42,16 +42,12 @@ class MainWindow(__form_class__, __base_class__):
         self.splitter.setCollapsible(1, True)
         self.splitter.setSizes([self.splitter.width() * 0.25, self.splitter.width() *0.75])
 
-        # Menu
-        self.menuFile.addAction(self.actionNewScene)
-
         # Actions
         self.actionNewScene.triggered.connect(self._sceneNew)
         self.actionInsertNode.triggered.connect(self._nodeInsert)
         self.actionRemoveNode.triggered.connect(self._nodeRemove)
         self.actionAquirePrimaryCamera.triggered.connect(self._cameraActivate)
         self.actionReleasePrimaryCamera.triggered.connect(self._cameraRelease)
-        self.actionExit.triggered.connect(self.close)
 
     def _testScene(self):
         self.actionNewScene.trigger()
