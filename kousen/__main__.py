@@ -12,6 +12,8 @@ def main():
     from ui.mainwindow import MainWindow
 
     app = PySide.QtGui.QApplication(['Kousen'])
+    app.setQuitOnLastWindowClosed(True)
+
     mainwindow = MainWindow()
     mainwindow.show()
 
