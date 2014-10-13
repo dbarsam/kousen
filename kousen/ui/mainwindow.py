@@ -48,7 +48,7 @@ class MainWindow(__form_class__, __base_class__):
 
     def _testScene(self):
         self.actionNewScene.trigger()
-        self._nodeInsert([TestPattern()])
+        self._nodeInsert([ColorCubeObject()])
 
     def _sceneNew(self):
         # Scene Graph Model
