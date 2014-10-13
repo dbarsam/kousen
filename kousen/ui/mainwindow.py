@@ -56,7 +56,6 @@ class MainWindow(__form_class__, __base_class__):
 
         # Scene Graph Explorer's Scene Graph Model Views
         self.sceneExplorer.clear()
-        self.sceneExplorer.label = "<NewScene>"
         self.sceneExplorer.push(self._sceneGraph) 
         self.sceneExplorer.push(TreeColumnFilterProxyModel())
 
