@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/scene-hierarchy.png</file>
     <file>icons/chevron-down.png</file>
     <file>icons/chevron-left.png</file>
     <file>icons/chevron-right.png</file>
