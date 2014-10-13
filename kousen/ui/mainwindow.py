@@ -30,17 +30,13 @@ class MainWindow(__form_class__, __base_class__):
     def setupUi(self, widget):
         super(MainWindow, self).setupUi(widget)
 
-        # Scene Graph TreeWidget
-        self.treewidget.reloadable = False
-        self.treewidget.immediate = True
-        self.treewidget.label = None
-        self.treewidget.view.customContextMenuRequested.connect(self._treeViewContextMenuRequested)
-        self.treewidget.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.treewidget.view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-
-        self.splitter.setCollapsible(0, True)
-        self.splitter.setCollapsible(1, True)
-        self.splitter.setSizes([self.splitter.width() * 0.25, self.splitter.width() *0.75])
+        # Scene Graph Explorer
+        self.sceneExplorer.reloadable = False
+        self.sceneExplorer.immediate = True
+        self.sceneExplorer.label = None
+        self.sceneExplorer.view.customContextMenuRequested.connect(self._sceneExplorerContextMenuRequested)
+        self.sceneExplorer.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.sceneExplorer.view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
         # Actions
         self.actionNewScene.triggered.connect(self._sceneNew)
@@ -48,6 +44,7 @@ class MainWindow(__form_class__, __base_class__):
         self.actionRemoveNode.triggered.connect(self._nodeRemove)
         self.actionAquirePrimaryCamera.triggered.connect(self._cameraActivate)
         self.actionReleasePrimaryCamera.triggered.connect(self._cameraRelease)
+        self.dockSceneExplorer.toggleViewAction().toggled.connect(self.actionViewSceneExplorer.setChecked)
 
     def _testScene(self):
         self.actionNewScene.trigger()
@@ -57,11 +54,11 @@ class MainWindow(__form_class__, __base_class__):
         # Scene Graph Model
         self._sceneGraph = GLSceneModel(SceneGraphItem.Fields.headerdata(), self)
 
-        # Tree View Scene Graph Model Views
-        self.treewidget.clear()
-        self.treewidget.label = "<NewScene>"
-        self.treewidget.push(self._sceneGraph) 
-        self.treewidget.push(TreeColumnFilterProxyModel())
+        # Scene Graph Explorer's Scene Graph Model Views
+        self.sceneExplorer.clear()
+        self.sceneExplorer.label = "<NewScene>"
+        self.sceneExplorer.push(self._sceneGraph) 
+        self.sceneExplorer.push(TreeColumnFilterProxyModel())
 
         # OpenGL Scene Graph Model View
         self.glwidget.setModel(self._sceneGraph)
@@ -76,44 +73,44 @@ class MainWindow(__form_class__, __base_class__):
             nodetypes = dlg.selection() if dlg.show_() else []
             nodes = [node() for node in nodetypes]
 
-        parentIndexes = self.treewidget.selectedIndexes or [QtCore.QModelIndex()]
+        parentIndexes = self.sceneExplorer.selectedIndexes or [QtCore.QModelIndex()]
         indexes = []
         for node in nodes:
             for parentIndex in parentIndexes:
-                indexes.append( self.treewidget.source.appendItem(node, parentIndex) )
+                indexes.append( self.sceneExplorer.source.appendItem(node, parentIndex) )
 
         if indexes:
             self.glwidget.update()
             if autoselect:
-                self.treewidget.selectedIndexes = indexes
+                self.sceneExplorer.selectedIndexes = indexes
 
     def _nodeRemove(self, nodes=[]):
         if not nodes:
-            nodes = self.treewidget.selectedItems
+            nodes = self.sceneExplorer.selectedItems
         for node in nodes:
-            self.treewidget.source.removeItem(node)
+            self.sceneExplorer.source.removeItem(node)
         if nodes:
             self.glwidget.update()
 
     def _cameraActivate(self, node=None):
         if not node:
-            node = next( (n for n in self.treewidget.selectedItems if type(n) is GLCameraNode), None)
+            node = next( (n for n in self.sceneExplorer.selectedItems if type(n) is GLCameraNode), None)
         if node:
-            self.treewidget.source.activeCamera = node
+            self.sceneExplorer.source.activeCamera = node
             #for hud in [n for n in nodes if type(n) is CameraHUDNode]:
             #    hud.camera = node
 
     def _cameraRelease(self):
-        self.treewidget.source.activeCamera = None
+        self.sceneExplorer.source.activeCamera = None
 
-    def _treeViewContextMenuRequested(self, pos):
+    def _sceneExplorerContextMenuRequested(self, pos):
         menu = QtGui.QMenu()
         
-        nodes = self.treewidget.selectedItems
+        nodes = self.sceneExplorer.selectedItems
         cameras = [n for n in nodes if type(n) is GLCameraNode]
-        if any(c == self.treewidget.source.activeCamera for c in cameras):
+        if any(c == self.sceneExplorer.source.activeCamera for c in cameras):
             menu.addAction(self.actionReleasePrimaryCamera)
-        if any(c != self.treewidget.source.activeCamera for c in cameras):
+        if any(c != self.sceneExplorer.source.activeCamera for c in cameras):
             menu.addAction(self.actionAquirePrimaryCamera)
         if cameras:
             menu.addSeparator()

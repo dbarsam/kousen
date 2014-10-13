@@ -14,21 +14,18 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="GLWidget" name="glwidget" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
       </property>
-      <widget class="FilteredTree" name="treewidget" native="true"/>
-      <widget class="GLWidget" name="glwidget" native="true">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -50,9 +47,29 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionViewSceneExplorer"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockSceneExplorer">
+   <property name="windowIcon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/scene-hierarchy.png</normaloff>:/icons/scene-hierarchy.png</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>Scene Explorer</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="FilteredTree" name="sceneExplorer"/>
+  </widget>
   <action name="actionNewScene">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
@@ -119,6 +136,27 @@
     <string>Releases the camera from being the active camera.</string>
    </property>
   </action>
+  <action name="actionViewSceneExplorer">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/scene-hierarchy.png</normaloff>:/icons/scene-hierarchy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Scene E&amp;xplorer</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the Scene Explorer editor.</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows or hides the Scene Explorer editor.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -151,6 +189,22 @@
     <hint type="destinationlabel">
      <x>430</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionViewSceneExplorer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockSceneExplorer</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>39</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
