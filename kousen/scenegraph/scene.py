@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 
-from kousen.core.abstractmodel import AbstractData, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
+from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
 
 class SceneGraphItem(AbstractDataTreeItem):
     """
@@ -12,38 +12,11 @@ class SceneGraphItem(AbstractDataTreeItem):
     __icon__         = None
     __instantiable__ = False
 
-    class Fields(object):
+    class Fields(AbstractDataFields):
         """
         The Fields class provides an enumeration of the various fields within a SceneGraphItem.
         """
-        NAME  = 0
-
-        @classmethod
-        def fields(cls):
-            """
-            Generates a list of enum variables in this class.
-
-            @returns A list class attributes that act as the enum values
-            """
-            return [attr for attr in dir(SceneGraphItem.Fields) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
-
-        @classmethod
-        def headerdata(cls):
-            """
-            Generates an AbstractData containing header data for SceneGraphItem.
-
-            @returns An AbstractData object with header data.
-            """
-            return AbstractData.BuildData(dict((getattr(cls, field), field.capitalize()) for field in cls.fields()))
-
-        @classmethod
-        def size(cls):
-            """
-            Calculates the size of the fields list.
-
-            @returns The size of the field list.
-            """
-            return len(cls.fields())
+        NAME = 0
 
     @classmethod
     def subclasses(cls, recursive = True):
@@ -184,39 +157,12 @@ class SceneGraphType(AbstractDataTreeItem):
     """
     The Scene Item Type Item represents a type of a component of the scene in the scene hierarchy.
     """
-    class Fields(object):
+    class Fields(AbstractDataFields):
         """
         The Fields class provides an enumeration of the various fields within a SceneGraphItem.
         """
         NAME  = 0
         CLASS = 1
-
-        @classmethod
-        def fields(cls):
-            """
-            Generates a list of enum variables in this class.
-
-            @returns A list class attributes that act as the enum values
-            """
-            return [attr for attr in dir(SceneGraphItem.Fields) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
-
-        @classmethod
-        def headerdata(cls):
-            """
-            Generates an AbstractData containing header data for SceneGraphType
-
-            @returns An AbstractData object with header data.
-            """
-            return AbstractData.BuildData(dict((getattr(cls, field), field.capitalize()) for field in cls.fields()))
-
-        @classmethod
-        def size(cls):
-            """
-            Calculates the size of the fields list.
-
-            @returns The size of the field list.
-            """
-            return len(cls.fields())
 
     def __init__(self, sdata={}, parent=None):
         """
