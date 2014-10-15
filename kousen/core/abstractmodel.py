@@ -1,5 +1,45 @@
 from PySide import QtGui, QtCore
 
+class AbstractDataFields(object):
+    """
+    The AbstractDataFields class provides an enumeration of the various fields within a DataModel.
+    """
+    @classmethod
+    def fields(cls):
+        """
+        Generates a list of enum variables in this class.
+
+        @returns A list class attributes that act as the enum values
+        """
+        return [attr for attr in dir(cls) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
+
+    @classmethod
+    def fieldvalues(cls):
+        """
+        Generates a list of enum variables in this class.
+
+        @returns A list class attributes that act as the enum values
+        """
+        return [getattr(cls, f) for f in cls.fields()]
+
+    @classmethod
+    def headerdata(cls):
+        """
+        Generates an AbstractData containing header data for SceneGraphType
+
+        @returns An AbstractData object with header data.
+        """
+        return AbstractData.BuildData(dict((getattr(cls, field), field.capitalize()) for field in cls.fields()))
+
+    @classmethod
+    def size(cls):
+        """
+        Calculates the size of the fields list.
+
+        @returns The size of the field list.
+        """
+        return len(cls.fields())
+
 class AbstractData(QtCore.QObject):
     """
     The AbstractData class is a structure to map static data to the various QtCore.Qt.ItemDataRole value.  It's goal is to provide easy access when used in conjuction with a AbtractItemModel's data() and setData() method.
