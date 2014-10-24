@@ -52,6 +52,7 @@
      <string>&amp;View</string>
     </property>
     <addaction name="actionViewSceneExplorer"/>
+    <addaction name="actionViewPropertyEditor"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -69,6 +70,19 @@
     <number>1</number>
    </attribute>
    <widget class="FilteredTree" name="sceneExplorer"/>
+  </widget>
+  <widget class="QDockWidget" name="dockPropertyEditor">
+   <property name="windowIcon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/properties.png</normaloff>:/icons/properties.png</iconset>
+   </property>
+   <property name="windowTitle">
+    <string>Property Editor</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="FilteredTree" name="propertyEditor"/>
   </widget>
   <action name="actionNewScene">
    <property name="icon">
@@ -151,10 +165,28 @@
     <string>Scene E&amp;xplorer</string>
    </property>
    <property name="toolTip">
-    <string>Toggles the Scene Explorer editor.</string>
+    <string>Toggles the Scene Explorer tool window.</string>
    </property>
    <property name="statusTip">
-    <string>Shows or hides the Scene Explorer editor.</string>
+    <string>Shows or hides the Scene Explorer tool window.</string>
+   </property>
+  </action>
+  <action name="actionViewPropertyEditor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/properties.png</normaloff>:/icons/properties.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Property Editor</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the Property Editor tool window.</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows or hides the Property Editor tool window.</string>
    </property>
   </action>
  </widget>
@@ -204,6 +236,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>39</x>
+     <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionViewPropertyEditor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockPropertyEditor</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>789</x>
      <y>300</y>
     </hint>
    </hints>

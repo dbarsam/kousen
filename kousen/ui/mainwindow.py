@@ -2,6 +2,7 @@ import sys
 import os
 from PySide import QtGui, QtCore
 from kousen.math import Point3D
+from kousen.core.propertymodel import PropertyItem, PropertyModel
 from kousen.core.proxymodel import ColumnFilterProxyModel, UndoRedoProxyModel, TreeColumnFilterProxyModel
 from kousen.scenegraph import SceneGraphItem
 from kousen.gl.glscene import GLSceneNode, GLSceneModel
@@ -34,9 +35,22 @@ class MainWindow(__form_class__, __base_class__):
         self.sceneExplorer.reloadable = False
         self.sceneExplorer.immediate = True
         self.sceneExplorer.label = None
-        self.sceneExplorer.view.customContextMenuRequested.connect(self._sceneExplorerContextMenuRequested)
         self.sceneExplorer.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.sceneExplorer.view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.sceneExplorer.view.customContextMenuRequested.connect(self._sceneExplorerContextMenuRequested)
+        self.sceneExplorer.view.currentSelectionChanged.connect(self._sceneExplorerSelectionChanged)
+
+        # Property Editor
+        self.propertyEditor.reloadable = False
+        self.propertyEditor.immediate = True
+        self.propertyEditor.label = None
+        self.propertyEditor.view.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.propertyEditor.view.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.propertyEditor.view.customContextMenuRequested.connect(self._propertyEditorContextMenuRequested)
+        self.propertyEditor.view.currentSelectionChanged.connect(self._propertyEditorSelectionChanged)
+        self.propertyEditor.view.setAlternatingRowColors(True)
+        self.propertyEditor.push(PropertyModel(PropertyItem.Fields.headerdata(), self)) 
+        self.propertyEditor.push(TreeColumnFilterProxyModel())
 
         # Actions
         self.actionNewScene.triggered.connect(self._sceneNew)
@@ -45,6 +59,7 @@ class MainWindow(__form_class__, __base_class__):
         self.actionAquirePrimaryCamera.triggered.connect(self._cameraActivate)
         self.actionReleasePrimaryCamera.triggered.connect(self._cameraRelease)
         self.dockSceneExplorer.toggleViewAction().toggled.connect(self.actionViewSceneExplorer.setChecked)
+        self.dockPropertyEditor.toggleViewAction().toggled.connect(self.actionViewPropertyEditor.setChecked)
 
     def _testScene(self):
         self.actionNewScene.trigger()
@@ -103,6 +118,11 @@ class MainWindow(__form_class__, __base_class__):
         self.sceneExplorer.source.activeCamera = None
 
     def _sceneExplorerContextMenuRequested(self, pos):
+        """
+        Handles the Custom Context Menu Requested event from the Scene Explorer.
+
+        @param pos   The global position of the request.
+        """
         menu = QtGui.QMenu()
         
         nodes = self.sceneExplorer.selectedItems
@@ -115,4 +135,36 @@ class MainWindow(__form_class__, __base_class__):
             menu.addSeparator()
         menu.addActions([self.actionInsertNode, self.actionRemoveNode])
         menu.exec_(QtGui.QCursor.pos())
+
+    def _sceneExplorerSelectionChanged(self, selected, deselected):
+        """
+        Handles the Selection Changed event from the Scene Explorer.
+
+        @param selected   The new selection (which may be empty)
+        @param deselected The previous selection (which may be empty)
+        """
+        sourceSelected = self.sceneExplorer.mapSelectionToSourceItem(selected)
+        self.propertyEditor.source.insertProperties(sourceSelected)
+        sourceDeselected = self.sceneExplorer.mapSelectionToSourceItem(deselected)        
+        self.propertyEditor.source.removeProperties(sourceDeselected)
+
+    def _propertyEditorContextMenuRequested(self, pos):
+        """
+        Handles the Custome Context Menu Requested event from the Property Editor.
+
+        @param pos   The global position of the request.
+        """
+        menu = QtGui.QMenu()       
+        menu.exec_(QtGui.QCursor.pos())
+
+    def _propertyEditorSelectionChanged(self, selected, deselected):
+        """
+        Handles the Selection Changed event from the Property Editor.
+
+        @param selected   The new selection (which may be empty)
+        @param deselected The previous selection (which may be empty)
+        """
+        sourceSelected = self.sceneExplorer.mapSelectionToSource(selected)
+        if sourceSelected:
+            pass
 
