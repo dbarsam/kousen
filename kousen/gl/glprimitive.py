@@ -32,6 +32,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         
         # Initial color of the object.
         self._color = QtGui.QColor(1, 0, 0, 1)
+        self._selected = False
 
     @property
     def selected(self):
@@ -49,7 +50,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
 
         @param value True if the object is to be selected; False otherwise.
         """ 
-        self.selected = state
+        self._selected = state
 
     @property
     def color(self):
@@ -62,14 +63,14 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
             return self.__primitive_selectioncolor__
         return self._color
 
-    @property
+    @color.setter
     def color(self, value):
         """
         Convenience property to access the color state node.
 
         @param value A QtGui.QColor instance.
         """ 
-        self._selected = value
+        self._color = value
  
 class GridObject(GLPrimitiveNode):
 
