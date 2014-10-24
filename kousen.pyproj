@@ -20,7 +20,9 @@
   <ItemGroup>
     <Compile Include="kousen\core\abstractmodel.py" />
     <Compile Include="kousen\core\exception.py" />
+    <Compile Include="kousen\core\propertymodel.py" />
     <Compile Include="kousen\core\proxymodel.py" />
+    <Compile Include="kousen\ui\views.py" />
     <Compile Include="kousen\core\__init__.py" />
     <Compile Include="kousen\gl\glprimitive.py" />
     <Compile Include="kousen\gl\glscene.py" />
