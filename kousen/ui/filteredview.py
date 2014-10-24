@@ -1,8 +1,8 @@
 import os
-from PySide import QtGui
-from PySide import QtCore
+from PySide import QtGui, QtCore
 
 from kousen.ui.uiloader import UiLoader
+from kousen.ui.views import TreeView
 
 __form_class__, __base_class__ = UiLoader.loadUiType(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'filteredview.ui'))
 
@@ -390,8 +390,15 @@ class FilteredView(__base_class__, __form_class__):
         sourceSelection = proxySelection
         for model in reversed(self._stack):
             if isinstance(model, QtGui.QAbstractProxyModel):
-                sourceSelection = model.mapSelectionToSource(sourceIndex)
+                sourceSelection = model.mapSelectionToSource(sourceSelection)
         return sourceSelection
+
+    def mapSelectionToSourceItem(self, proxySelection):
+        """
+        Converts an proxy selection to the corresponding source sitem list.
+        """
+        sourceSelection = self.mapSelectionToSource(proxySelection)
+        return [self.source.item(i) for i in sourceSelection.indexes()]
 
     def mapSelectionFromSource ( self, sourceSelection ):
         """
@@ -434,7 +441,7 @@ class FilteredTree(FilteredView):
     The FilteredTree class provides specialised FilterView with a TreeView widget.
     """
     def __init__(self, parent=None):
-        super(FilteredTree, self).__init__(QtGui.QTreeView(), parent)
+        super(FilteredTree, self).__init__(TreeView(), parent)
         self.setWindowTitle("Filtered Tree")
 
 class FilteredTable(FilteredView):
