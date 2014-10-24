@@ -1,7 +1,5 @@
 import os
 from PySide import QtGui, QtCore
-from PySide import QtGui, QtCore
-from PySide import QtCore, QtGui
 from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel, ColumnFilterDataProxyModel
 from kousen.core.abstractmodel import AbstractDataItem, AbstractData, AbstractDataListModel
 from kousen.scenegraph import SceneGraphItem
