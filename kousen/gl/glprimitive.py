@@ -16,7 +16,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
     Base class for any Primitive used in the GLWidget class.
     """
     # Additional Meta Information
-    __primitive_selectioncolor__ = QtGui.QColor(1, 1, 0, 1)
+    __primitive_selectioncolor__ = QtGui.QColor(255, 0, 0)
 
     # Additional Meta Information
     __category__ = "OpenGL Primitive"
@@ -31,7 +31,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         super(GLPrimitiveNode, self).__init__(name, parent) 
         
         # Initial color of the object.
-        self._color = QtGui.QColor(1, 0, 0, 1)
+        self._color = QtGui.QColor(0, 255, 0)
         self._selected = False
 
     @property
@@ -50,7 +50,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
 
         @param value True if the object is to be selected; False otherwise.
         """ 
-        self._selected = state
+        self._selected = value
 
     @property
     def color(self):
