@@ -312,7 +312,7 @@ class AbstractDataItem(QtCore.QObject):
 
         @param value A valid combination of the QtCore.Qt.QFlags enum.
         """
-        for id in self._staticdata.data():
+        for id in self._staticdata.data(AbstractData.FlagRole):
             self.setFlags(id, self.flags(id) | value)
 
     def removeFlags(self, value):
@@ -321,7 +321,7 @@ class AbstractDataItem(QtCore.QObject):
 
         @param value A valid combination of the QtCore.Qt.QFlags enum.
         """
-        for id in self._staticdata.data():
+        for id in self._staticdata.data(AbstractData.FlagRole):
             self.setFlags(id, self.flags(id) & ~value)
 
 class AbstractDataTreeItem(AbstractDataItem):
