@@ -1,6 +1,7 @@
+from enum import IntEnum, unique
 from PySide import QtGui, QtCore
 
-class AbstractDataFields(object):
+class AbstractDataFields(IntEnum):
     """
     The AbstractDataFields class provides an enumeration of the various fields within a DataModel.
     """
@@ -11,7 +12,7 @@ class AbstractDataFields(object):
 
         @returns A list class attributes that act as the enum values
         """
-        return [attr for attr in dir(cls) if not callable(getattr(cls, attr)) and not attr.startswith("__")]
+        return [e.name for e in cls]
 
     @classmethod
     def fieldvalues(cls):
@@ -20,7 +21,7 @@ class AbstractDataFields(object):
 
         @returns A list class attributes that act as the enum values
         """
-        return [getattr(cls, f) for f in cls.fields()]
+        return [e.value for e in cls]
 
     @classmethod
     def headerdata(cls):
