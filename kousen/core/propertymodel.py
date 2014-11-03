@@ -14,6 +14,9 @@ class PropertyItem(AbstractDataTreeItem):
         NAME  = 0
         VALUE = 1
 
+    # Define a table of roles and respective types that return the property value
+    ROLEVALUES = { QtCore.Qt.DecorationRole : [QtGui.QColor] }
+
     def __init__(self, name=None, property=None, parent=None):
         """
         Constructor.
@@ -23,9 +26,12 @@ class PropertyItem(AbstractDataTreeItem):
         @param parent     The initial parent AbstractDataTreeItem of this PropertyItem
         """        
         super(PropertyItem, self).__init__(AbstractData.BuildData([name]), parent)
-        
+
         # The property
         self._property = property
+        if self._property.fset:
+            self._staticdata[AbstractData.FlagRole, PropertyItem.Fields.VALUE] = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+
         # The list of component with the property for which to retrieve the value.
         self._components = set()
 
@@ -87,9 +93,13 @@ class PropertyItem(AbstractDataTreeItem):
         @param role The filter key of the lookup operation.
         @returns    The data if the lookup operation was succesful; False otherwise.
         """
-        if id == self.Fields.VALUE:
-            if role == QtCore.Qt.DisplayRole:
-                return str(self.fget());
+        if id == self.Fields.VALUE:            
+            if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
+                return self.fget()
+            if role in self.ROLEVALUES:
+                value = self.fget()
+                if type(value) in self.ROLEVALUES[role]:
+                    return self.fget()
 
         return super(PropertyItem, self).data(id, role)
  
@@ -107,7 +117,7 @@ class PropertyItem(AbstractDataTreeItem):
             self.dataChanged.emit(id, role)
             return True
 
-        return super(PropertyItem, self).data(id, role)
+        return super(PropertyItem, self).setData(id, role)
 
 class PropertyRoot(AbstractDataTreeItem):
     """
@@ -213,3 +223,5 @@ class PropertyModel(AbstractDataTreeModel):
                 if pitem.isEmpty():
                     self.removeItem(pitem)
                     del classdict[name]
+            if not classdict:
+                self._propertyTable.pop(object.__class__, None)
