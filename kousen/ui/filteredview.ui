@@ -62,7 +62,7 @@
       </widget>
      </item>
      <item>
-      <widget class="LineFilter" name="filterString">
+      <widget class="FilterLineEdit" name="filterString">
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -98,7 +98,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LineFilter</class>
+   <class>FilterLineEdit</class>
    <extends>QLineEdit</extends>
    <header>ui.lineedit</header>
   </customwidget>
