@@ -15,7 +15,7 @@ class PropertyItem(AbstractDataTreeItem):
         VALUE = 1
 
     # Define a table of roles and respective types that return the property value
-    ROLEVALUES = { QtCore.Qt.DecorationRole : [QtGui.QColor] }
+    roleValues = { QtCore.Qt.DecorationRole : [QtGui.QColor] }
 
     def __init__(self, name=None, property=None, parent=None):
         """
@@ -96,9 +96,9 @@ class PropertyItem(AbstractDataTreeItem):
         if id == self.Fields.VALUE:            
             if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
                 return self.fget()
-            if role in self.ROLEVALUES:
+            if role in self.roleValues:
                 value = self.fget()
-                if type(value) in self.ROLEVALUES[role]:
+                if type(value) in self.roleValues[role]:
                     return self.fget()
 
         return super(PropertyItem, self).data(id, role)
