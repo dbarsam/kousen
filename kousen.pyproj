@@ -22,6 +22,7 @@
     <Compile Include="kousen\core\exception.py" />
     <Compile Include="kousen\core\propertymodel.py" />
     <Compile Include="kousen\core\proxymodel.py" />
+    <Compile Include="kousen\ui\lineedit.py" />
     <Compile Include="kousen\ui\views.py" />
     <Compile Include="kousen\core\__init__.py" />
     <Compile Include="kousen\gl\glprimitive.py" />
@@ -40,7 +41,6 @@
     <Compile Include="kousen\scenegraph\transform.py" />
     <Compile Include="kousen\scenegraph\__init__.py" />
     <Compile Include="kousen\ui\filteredview.py" />
-    <Compile Include="kousen\ui\linefilter.py" />
     <Compile Include="kousen\ui\mainwindow.py" />
     <Compile Include="kousen\ui\messagebox.py" />
     <Compile Include="kousen\ui\itemdialog.py" />

@@ -100,7 +100,7 @@
   <customwidget>
    <class>LineFilter</class>
    <extends>QLineEdit</extends>
-   <header>ui.linefilter</header>
+   <header>ui.lineedit</header>
   </customwidget>
  </customwidgets>
  <resources>
