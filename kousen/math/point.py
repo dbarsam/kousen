@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 
 class Point3D(object):

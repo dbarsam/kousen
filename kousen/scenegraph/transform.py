@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from kousen.math import Vector3D, Point3D, Matrix4x4
 from kousen.scenegraph import SceneGraphItem
 

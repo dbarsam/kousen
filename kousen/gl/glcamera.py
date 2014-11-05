@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 from PySide import QtGui, QtCore
 from OpenGL import GL

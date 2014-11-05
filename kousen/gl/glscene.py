@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 from PySide import QtCore, QtGui
 from OpenGL import GL
 from OpenGL import GLU

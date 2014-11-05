@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from kousen.scenegraph.scene import SceneGraphItem
 from kousen.scenegraph.scene import SceneGraphModel
 from kousen.scenegraph.scene import SceneGraphType

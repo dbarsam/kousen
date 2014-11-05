@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __all__ = ['abstractmodel', 'proxymodel', 'exception']
 
 from kousen.core.abstractmodel import AbstractData

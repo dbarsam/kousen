@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 from kousen.math.point import Point3D
 from kousen.math.vector import Vector3D

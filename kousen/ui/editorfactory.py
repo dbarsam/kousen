@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PySide import QtGui, QtCore
 from kousen.ui.lineedit import ColorLineEdit
 

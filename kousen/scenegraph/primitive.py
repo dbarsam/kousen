@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PySide import QtCore, QtGui
 from kousen.scenegraph.scene import SceneGraphItem
 

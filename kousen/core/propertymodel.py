@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PySide import QtGui, QtCore
 
 from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __all__ = ['conic', 'matrix', 'vector', 'point']
 
 from kousen.math.matrix import Matrix4x4

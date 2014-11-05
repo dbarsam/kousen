@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from PySide import QtGui, QtCore
 
@@ -599,6 +600,7 @@ if __name__ == "__main__":
     tree.proxy.setFilterKeyColumn(-1)
     tree.label = "Example Tree"
     tree.immediate = False
+    tree.show()
 
     # List Example:
     # ListTree View -> Filter Proxy -> Filter Model

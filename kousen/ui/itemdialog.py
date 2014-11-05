@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from PySide import QtGui, QtCore
 from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel, ColumnFilterDataProxyModel
