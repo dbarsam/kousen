@@ -10,8 +10,9 @@ from kousen.gl.glcamera import *
 from kousen.gl.glhud import *
 from kousen.gl.glprimitive import *
 from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
-from ui.itemdialog import ItemCreationDialog
-from ui.uiloader import UiLoader
+from kousen.ui.itemdialog import ItemCreationDialog
+from kousen.ui.uiloader import UiLoader
+from kousen.ui.editorfactory import ItemEditorFactoryDelegate
 
 __form_class__, __base_class__ = UiLoader.loadUiType(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mainwindow.ui'))
 
@@ -29,6 +30,11 @@ class MainWindow(__form_class__, __base_class__):
         self.setupUi(self)
 
     def setupUi(self, widget):
+        """
+        Initializes the local state of the UI class.
+        
+        @param widget The instance of the UI class.
+        """
         super(MainWindow, self).setupUi(widget)
 
         # Scene Graph Explorer
@@ -49,8 +55,10 @@ class MainWindow(__form_class__, __base_class__):
         self.propertyEditor.view.customContextMenuRequested.connect(self._propertyEditorContextMenuRequested)
         self.propertyEditor.view.currentSelectionChanged.connect(self._propertyEditorSelectionChanged)
         self.propertyEditor.view.setAlternatingRowColors(True)
+        self.propertyEditor.view.setEditTriggers(QtGui.QAbstractItemView.CurrentChanged)
+        self.propertyEditor.view.setItemDelegateForColumn(PropertyItem.Fields.VALUE, ItemEditorFactoryDelegate(self.propertyEditor.view))
         self.propertyEditor.push(PropertyModel(PropertyItem.Fields.headerdata(), self)) 
-        self.propertyEditor.push(TreeColumnFilterProxyModel())
+        self.propertyEditor.push(TreeColumnFilterProxyModel())        
 
         # Actions
         self.actionNewScene.triggered.connect(self._sceneNew)
@@ -62,10 +70,16 @@ class MainWindow(__form_class__, __base_class__):
         self.dockPropertyEditor.toggleViewAction().toggled.connect(self.actionViewPropertyEditor.setChecked)
 
     def _testScene(self):
+        """
+        Debug Function to quickly create a scene
+        """
         self.actionNewScene.trigger()
         self._nodeInsert([ColorCubeObject()])
 
     def _sceneNew(self):
+        """
+        Creates a new scene.
+        """
         # Scene Graph Model
         self._sceneGraph = GLSceneModel(SceneGraphItem.Fields.headerdata(), self)
 
@@ -82,6 +96,12 @@ class MainWindow(__form_class__, __base_class__):
         self._cameraActivate(camera)
 
     def _nodeInsert(self, nodes=[], autoselect=True):
+        """
+        Insert nodes into the scene's scenegraph.
+
+        @param nodes      A list of nodes to be inserted.
+        @param autoselect Flag to denote that the new nodes will be selected immediately after insertion.
+        """
         if not nodes:
             dlg = ItemCreationDialog(self)
             nodetypes = dlg.selection() if dlg.show_() else []
@@ -99,6 +119,11 @@ class MainWindow(__form_class__, __base_class__):
                 self.sceneExplorer.selectedIndexes = indexes
 
     def _nodeRemove(self, nodes=[]):
+        """
+        Remove nodes from the scene's scenegraph.
+
+        @param nodes      A list of nodes to be removed.
+        """
         if not nodes:
             nodes = self.sceneExplorer.selectedItems
         for node in nodes:
@@ -107,6 +132,11 @@ class MainWindow(__form_class__, __base_class__):
             self.glwidget.update()
 
     def _cameraActivate(self, node=None):
+        """
+        Activates a camera node in the scene graph, making it the scene graph's primary camera.
+
+        @param node An instance of a camera node.
+        """
         if not node:
             node = next( (n for n in self.sceneExplorer.selectedItems if type(n) is GLCameraNode), None)
         if node:
@@ -115,6 +145,11 @@ class MainWindow(__form_class__, __base_class__):
             #    hud.camera = node
 
     def _cameraRelease(self):
+        """
+        Deactivates the scene graph's currently activated camera.
+
+        @note With no active camera the results may be unpredictable.
+        """
         self.sceneExplorer.source.activeCamera = None
 
     def _sceneExplorerContextMenuRequested(self, pos):
@@ -143,10 +178,11 @@ class MainWindow(__form_class__, __base_class__):
         @param selected   The new selection (which may be empty)
         @param deselected The previous selection (which may be empty)
         """
-        sourceSelected = self.sceneExplorer.mapSelectionToSourceItem(selected)
-        self.propertyEditor.source.insertProperties(sourceSelected)
         sourceDeselected = self.sceneExplorer.mapSelectionToSourceItem(deselected)        
         self.propertyEditor.source.removeProperties(sourceDeselected)
+
+        sourceSelected = self.sceneExplorer.mapSelectionToSourceItem(selected)
+        self.propertyEditor.source.insertProperties(sourceSelected)
 
     def _propertyEditorContextMenuRequested(self, pos):
         """
@@ -164,7 +200,7 @@ class MainWindow(__form_class__, __base_class__):
         @param selected   The new selection (which may be empty)
         @param deselected The previous selection (which may be empty)
         """
-        sourceSelected = self.sceneExplorer.mapSelectionToSource(selected)
+        sourceSelected = self.propertyEditor.mapSelectionToSource(selected)
         if sourceSelected:
             pass
 
