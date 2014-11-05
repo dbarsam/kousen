@@ -1,15 +1,13 @@
 import sys
 import os
-sys.path.append( os.path.abspath(os.path.join(os.path.dirname(__file__), '..')) )
+import PySide
 
 def main():
     """
     The main entry point for Kousen
-    """
-    import sys
-    import PySide
-    import resources_rc
-    from ui.mainwindow import MainWindow
+    """    
+    import kousen.resources_rc
+    from kousen.ui.mainwindow import MainWindow
 
     app = PySide.QtGui.QApplication(['Kousen'])
     app.setQuitOnLastWindowClosed(True)
@@ -20,4 +18,7 @@ def main():
     return app.exec_()
 
 if __name__ == '__main__':
-  sys.exit(main())
+    packagepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    if not packagepath in sys.path:
+        sys.path.append(packagepath)
+    sys.exit(main())
