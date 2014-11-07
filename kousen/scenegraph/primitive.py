@@ -18,8 +18,8 @@ class PrimitiveNode(SceneGraphItem):
         @param name    The display name of the node.
         @param parent  The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
         """
-        super(PrimitiveNode, self).__init__({}, parent) 
-        
+        super(PrimitiveNode, self).__init__({}, parent)
+
         self._staticdata[QtCore.Qt.DisplayRole, SceneGraphItem.Fields.NAME]        = name or self.__label__
         self._staticdata[QtCore.Qt.DecorationRole, SceneGraphItem.Fields.NAME]     = QtGui.QIcon(QtGui.QPixmap(self.__icon__))
         self._staticdata[QtCore.Qt.ToolTipRole, SceneGraphItem.Fields.NAME]        = name or self.__description__

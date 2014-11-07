@@ -6,7 +6,7 @@ from kousen.core.abstractmodel import AbstractData, AbstractDataFields, Abstract
 class SceneGraphItem(AbstractDataTreeItem):
     """
     The Scene Item represents a component of the scene in the scene hierarchy.
-    """    
+    """
     # Additional Meta Information
     __category__     = "<unknown>"
     __description__  = "<Invalid Scene Graph Item>"
@@ -72,7 +72,7 @@ class SceneGraphItem(AbstractDataTreeItem):
         """
         Generates an inclusive list of node and children based on a boolean expression evaluation.
 
-        @param   condition A lambda expression used to recursively evaluate each node. 
+        @param   condition A lambda expression used to recursively evaluate each node.
         @returns           A list of SceneGraphItem that succesfully evaluate the condition.
         """
         result = [self] if condition(self) else []
@@ -115,7 +115,7 @@ class SceneGraphModel(AbstractDataTreeModel):
         Convenience property to access the Scene Graph Model's active Camera Node
 
         @returns A Camera Node if valid; None otherwise.
-        """ 
+        """
         return self._camera
 
     @activeCamera.setter
@@ -124,7 +124,7 @@ class SceneGraphModel(AbstractDataTreeModel):
         Convenience property to access the Scene Graph Model's active Camera Node
 
         @param value An instance of a Camera Node.
-        """ 
+        """
         self._camera = value
 
     def createRoot(self, *args):
@@ -149,7 +149,7 @@ class SceneGraphModel(AbstractDataTreeModel):
         """
         Generates an inclusive list of node and children based on a boolean expression evaluation.
 
-        @param   condition A lambda expression used to recursively evaluate each node. 
+        @param   condition A lambda expression used to recursively evaluate each node.
         @returns           A list of SceneGraphItem that succesfully evaluate the condition.
         """
         return self._root.filter(condition)
@@ -221,7 +221,7 @@ class SceneGraphTypeTreeModel(AbstractDataTreeModel):
         @param   args A variable size list of arguments to be evaluated during reloading.
         """
         from itertools import groupby
-        
+
         self.beginResetModel()
         self.clear()
 

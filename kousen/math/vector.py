@@ -21,7 +21,7 @@ class Vector3D(object):
         Convenience property for the 'x' value
 
         @returns The value stored for the 'x' component
-        """        
+        """
         return self._data[0]
 
     @property
@@ -39,7 +39,7 @@ class Vector3D(object):
         Convenience property for the 'z' value
 
         @returns The value stored for the 'z' component
-        """        
+        """
         return self._data[2]
 
     @property
@@ -48,7 +48,7 @@ class Vector3D(object):
         Convenience property to access the raw data
 
         @returns The list of values
-        """ 
+        """
         return self._data
 
     def __len__(self):
@@ -69,14 +69,14 @@ class Vector3D(object):
 
         @returns A string representation of the Vector3D
         """
-        return "{0}({v.x}, {v.y}, {v.z})".format(self.__class__.__name__, v=self) 
+        return "{0}({v.x}, {v.y}, {v.z})".format(self.__class__.__name__, v=self)
 
     def __str__(self):
         """
         Generates the "informal" string representation of the Vector3D.
 
         @returns A string representation of the Vector3D
-        """                       
+        """
         return "V({v.x}, {v.y}, {v.z})".format(v=self)
 
     def __neg__(self):
@@ -105,7 +105,7 @@ class Vector3D(object):
 
         @param   other An object implementing x, y, z compoments
         @returns       The Vector3D difference
-        """  
+        """
         return self.__class__( self.x-other.x, self.y-other.y, self.z-other.z )
 
     def __mul__(self, other):
@@ -114,7 +114,7 @@ class Vector3D(object):
 
         @param   other An object implementing x, y, z compoments or a single scalar value
         @returns       The Vector3D product or Vector3D dot product
-        """  
+        """
         # dot product
         if isinstance(other, Vector3D):
            return self.dotproduct(other)
@@ -128,7 +128,7 @@ class Vector3D(object):
 
         @param   other An object implementing x, y, z compoments or a single scalar value
         @returns       The Vector3D product
-        """  
+        """
         return self*other
 
     def __div__(self,other):
@@ -137,17 +137,17 @@ class Vector3D(object):
 
         @param   other A single scalar value
         @returns       The Vector3D product
-        """  
+        """
         return self.__class__( self.x/other, self.y/other, self.z/other )
 
     def __xor__(self, other):
         """
-        Calculates the cross product of the Vector3D cross product operation.  
-        
+        Calculates the cross product of the Vector3D cross product operation.
+
         @param   other An object implementing x, y, z compoments.
         @returns       The Vector3D cross product.
         @warning       This overrides the '^' notation.
-        """ 
+        """
         return self.crossproduct(other)
 
     def __eq__(self,other):
@@ -165,7 +165,7 @@ class Vector3D(object):
 
         @param   other An object implementing x, y, z compoments
         @returns       True if the components not are equal; false otherwise
-        """ 
+        """
         return not (self==other)
 
     def dotproduct(self, other):
@@ -174,7 +174,7 @@ class Vector3D(object):
 
         @param   other An object implementing x, y, z compoments
         @returns       The dot product product
-        """  
+        """
         return self.x*other.x + self.y*other.y + self.z*other.z
 
     def angle(self, other):
@@ -193,7 +193,7 @@ class Vector3D(object):
         @param   other      An object implementing x, y, z compoments
         @param   normalized Flag to normalize the resulting cross product
         @returns            The cross product Vector3D
-        """  
+        """
         product = self.__class__(
             self.y*other.z - self.z*other.y,
             self.z*other.x - self.x*other.z,
@@ -209,7 +209,7 @@ class Vector3D(object):
         Copy Constructor.
 
         @returns A duplicate Vector3D with the same values.
-        """ 
+        """
         return self.__class__( self.x, self.y, self.z )
 
     def toPoint3D(self):
@@ -226,7 +226,7 @@ class Vector3D(object):
         Calculates the squared length.
 
         @returns The Vector3D length, squared.
-        """ 
+        """
         return self.x*self.x+self.y*self.y+self.z*self.z
 
     def length(self):
@@ -234,7 +234,7 @@ class Vector3D(object):
         Calculates the length.
 
         @returns The Vector3D length.
-        """ 
+        """
         return math.sqrt( self.lengthSquared() )
 
     def lengthInversed(self):
@@ -242,7 +242,7 @@ class Vector3D(object):
         Calculates the inverse length.
 
         @returns The Vector3D 1 / length if valid; 0 otherwise.
-        """ 
+        """
         l = self.length()
         return 1/l if l > 0 else 0
 

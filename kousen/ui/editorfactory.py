@@ -5,14 +5,14 @@ from kousen.ui.lineedit import ColorLineEdit
 class ColorEditor(ColorLineEdit):
     """
     The ColorEditor class provides a modified ColorLineEdit with a QProperty as required by QItemEditorFactory.
-    """    
+    """
     color = QtCore.Property('QColor', ColorLineEdit.getColor, ColorLineEdit.setColor, user=True)
 
     def __init__(self, parent=None):
         """
         Constructor
         """
-        super(ColorEditor, self).__init__(parent)   
+        super(ColorEditor, self).__init__(parent)
 
 class ColorEditorCreator(QtGui.QItemEditorCreatorBase):
     """
@@ -37,7 +37,7 @@ class ColorEditorCreator(QtGui.QItemEditorCreatorBase):
 
 class ItemEditorFactory(QtGui.QItemEditorFactory):
     """
-    The ItemEditorFactory implements a ItemEditorFactory registered with all editors created in the kousen.ui.editorfactory module.    
+    The ItemEditorFactory implements a ItemEditorFactory registered with all editors created in the kousen.ui.editorfactory module.
     """
     # Define a table of types and respective editor to register with this instance
     typeEditors = { QtGui.QColor : ColorEditorCreator }

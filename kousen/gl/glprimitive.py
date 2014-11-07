@@ -29,8 +29,8 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         @param name     The label of this object node.
         @param parent   The parent SceneGraphItem instance.
         """
-        super(GLPrimitiveNode, self).__init__(name, parent) 
-        
+        super(GLPrimitiveNode, self).__init__(name, parent)
+
         # Initial color of the object.
         self._color = QtGui.QColor(0, 255, 0)
         self._selected = False
@@ -41,16 +41,16 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         Convenience property to access the selection state of the node.
 
         @returns True if the object is selected; False otherwise.
-        """ 
+        """
         return self._selected
-    
+
     @selected.setter
     def selected(self, value):
         """
         Convenience property to access the selection state of the node.
 
         @param value True if the object is to be selected; False otherwise.
-        """ 
+        """
         self._selected = value
 
     @property
@@ -59,7 +59,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         Convenience property to access the color state node.
 
         @returns A QtGui.QColor instance.
-        """ 
+        """
         if self._selected:
             return self.__primitive_selectioncolor__
         return self._color
@@ -70,9 +70,9 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         Convenience property to access the color state node.
 
         @param value A QtGui.QColor instance.
-        """ 
+        """
         self._color = value
- 
+
 class GridObject(GLPrimitiveNode):
 
     __description__  = "Grid Primitve"
@@ -228,10 +228,10 @@ class QuadricSphere(GLPrimitiveNode):
                     q = self._quadric
                     GLU.gluQuadricNormals(q, GLU.GLU_SMOOTH )
                     GLU.gluQuadricDrawStyle( q, GLU.GLU_FILL );
-                    GLU.gluSphere(q, self._radius, 32, 32) 
+                    GLU.gluSphere(q, self._radius, 32, 32)
 
 class ColorCubeObject(GLPrimitiveNode):
-    
+
     __description__  = "Color Cube Primitve"
     __instantiable__ = True
 

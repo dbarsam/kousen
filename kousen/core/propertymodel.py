@@ -6,7 +6,7 @@ from kousen.core.abstractmodel import AbstractData, AbstractDataFields, Abstract
 class PropertyItem(AbstractDataTreeItem):
     """
     The Property Item represents a single Python property objects of an object.
-    """    
+    """
 
     class Fields(AbstractDataFields):
         """
@@ -25,7 +25,7 @@ class PropertyItem(AbstractDataTreeItem):
         @param name       The name of the property item.
         @param property   The property object assigned to the name.
         @param parent     The initial parent AbstractDataTreeItem of this PropertyItem
-        """        
+        """
         super(PropertyItem, self).__init__(AbstractData.BuildData([name]), parent)
 
         # The property
@@ -51,9 +51,9 @@ class PropertyItem(AbstractDataTreeItem):
 
         @param value  The value to use in the property's fset method.
         """
-        for c in self._components: 
+        for c in self._components:
             self._property.fset(c, value)
-    
+
     def insertComponent(self, component):
         """
         Inserts an object into this item's Python property object component list.
@@ -94,7 +94,7 @@ class PropertyItem(AbstractDataTreeItem):
         @param role The filter key of the lookup operation.
         @returns    The data if the lookup operation was succesful; False otherwise.
         """
-        if id == self.Fields.VALUE:            
+        if id == self.Fields.VALUE:
             if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
                 return self.fget()
             if role in self.roleValues:
@@ -103,7 +103,7 @@ class PropertyItem(AbstractDataTreeItem):
                     return self.fget()
 
         return super(PropertyItem, self).data(id, role)
- 
+
     def setData(self, id, value, role=QtCore.Qt.EditRole):
         """
         Sets the data for the corresponding id, filtered by the given role.
@@ -123,7 +123,7 @@ class PropertyItem(AbstractDataTreeItem):
 class PropertyRoot(AbstractDataTreeItem):
     """
     The Property Root represents an invisible root item in the Property Model.
-    """    
+    """
 
     class Fields(AbstractDataFields):
         """
@@ -138,7 +138,7 @@ class PropertyRoot(AbstractDataTreeItem):
 
         @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
         @param parent  The initial parent AbstractDataTreeItem of this PropertyItem
-        """        
+        """
         super(PropertyRoot, self).__init__(sdata, parent)
 
     def size(self):
@@ -192,7 +192,7 @@ class PropertyModel(AbstractDataTreeModel):
         import inspect
 
         for object in objects:
-            # Property obects exist at the class defintion; get the members of the object 
+            # Property obects exist at the class defintion; get the members of the object
             # and match them up with the class defition.
             for name, value, pobject in [(n, v, getattr(object.__class__, n, None)) for (n, v) in inspect.getmembers(object)]:
                 if not (pobject and isinstance(pobject, property)):
@@ -219,8 +219,8 @@ class PropertyModel(AbstractDataTreeModel):
             # Get the entire class lookup table entry for the class and remove the object
             # and if it is the last object in multiple selection remove the model data.
             classdict = self._propertyTable.get(object.__class__, {})
-            for name, pitem in [(k, classdict[k]) for k in list(classdict.keys())]:                
-                pitem.removeComponent(object)                    
+            for name, pitem in [(k, classdict[k]) for k in list(classdict.keys())]:
+                pitem.removeComponent(object)
                 if pitem.isEmpty():
                     self.removeItem(pitem)
                     del classdict[name]

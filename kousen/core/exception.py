@@ -4,7 +4,7 @@ import traceback
 
 class ExceptionMessage(object):
     """
-    The Exception Message class implements a more verbose string representation of a Python system exception.   
+    The Exception Message class implements a more verbose string representation of a Python system exception.
     """
     def __init__(self, exception):
         """
@@ -29,13 +29,13 @@ class ExceptionMessage(object):
         Generates the "informal" string representation of the Vector3D.
 
         @returns A string representation of the Exception Message
-        """                       
-        return self._message    
+        """
+        return self._message
 
     def _extract(self, exception):
         """
         Extracts the relavant information from a system exception
-        
+
         @param exception The system exception.
         @returns The respective message.
         """
@@ -43,7 +43,7 @@ class ExceptionMessage(object):
         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
         tbInfo = traceback.extract_tb(exc_tb)
         filename, line, func, text = tbInfo[-1]
-        message = [ 
+        message = [
             "****************************",
             " EXCEPTION: {0}".format(exception),
             "    File: {0}, Line: {1}, Exception: {2})".format(fname, str(exc_tb.tb_lineno), str(exc_type)),

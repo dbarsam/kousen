@@ -5,7 +5,7 @@ class ColorLineEdit(QtGui.QLineEdit):
     """
     The ColorLineEdit class provides a modified QLineEdit with a Color decoration and a 'browse' button to launch a QtGui.QColorDialog.
     """
-    colorChanged = QtCore.Signal(QtGui.QColor)    
+    colorChanged = QtCore.Signal(QtGui.QColor)
     colorRegex   = QtCore.QRegExp('^#[A-Fa-f0-9]{6}')
 
     def __init__(self, parent=None):
@@ -14,7 +14,7 @@ class ColorLineEdit(QtGui.QLineEdit):
         """
         super(ColorLineEdit, self).__init__(parent)
 
-        self._lbutton = QtGui.QToolButton(self)        
+        self._lbutton = QtGui.QToolButton(self)
         self._lbutton.setCursor(QtCore.Qt.ArrowCursor)
         self._lbutton.setSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Maximum)
         self._lbutton.setStyleSheet("QToolButton { background-color: transparent; border: none; padding: 0px;}")
@@ -32,7 +32,7 @@ class ColorLineEdit(QtGui.QLineEdit):
         self.setMinimumSize(max(self.minimumSizeHint().width(), lbuttonSize.width() + rbuttonSize.width() + frameWidth*2 + 2), self.minimumSizeHint().height())
 
         self.setValidator(QtGui.QRegExpValidator(ColorLineEdit.colorRegex, self))
-        
+
         self.editingFinished.connect(lambda: self.setColor(QtGui.QColor(self.text())))
 
         self.setColor(QtGui.QColor(0,0,0))
@@ -44,17 +44,17 @@ class ColorLineEdit(QtGui.QLineEdit):
         @param event A QResizeEvent containing the resize parameters.
         """
         super(ColorLineEdit, self).resizeEvent(event)
-        
+
         frameWidth = self.style().pixelMetric(QtGui.QStyle.PM_DefaultFrameWidth)
-        
-        rbuttonSize = QtCore.QSize(self._rbutton.sizeHint().width(), (self.height() - frameWidth * 2))        
+
+        rbuttonSize = QtCore.QSize(self._rbutton.sizeHint().width(), (self.height() - frameWidth * 2))
         self._rbutton.setFixedSize(rbuttonSize)
         self._rbutton.move(self.rect().right() - frameWidth - rbuttonSize.width(), (self.rect().bottom() + 1 - rbuttonSize.height())/2)
 
-        lbuttonSize = QtCore.QSize(self._lbutton.sizeHint().width(), (self.height() - frameWidth * 2))                
+        lbuttonSize = QtCore.QSize(self._lbutton.sizeHint().width(), (self.height() - frameWidth * 2))
         self._lbutton.setFixedSize(lbuttonSize)
         self._lbutton.move(self.rect().left() + frameWidth + 1, self.rect().top() + frameWidth)
-        
+
     def showDialog(self):
         """
         Launches the Color Dialog and stores the resulting color, if valid.
@@ -78,11 +78,11 @@ class ColorLineEdit(QtGui.QLineEdit):
         @param color A valid QtGui.QColor instance.
         """
         self._color = color
-        
+
         pixmap = QtGui.QPixmap(5,5)
         pixmap.fill(color)
         self._lbutton.setIcon(QtGui.QIcon(pixmap.scaled(self._lbutton.sizeHint(), QtCore.Qt.KeepAspectRatio)))
-        
+
         self.setText(color.name())
 
         self.colorChanged.emit(self._color)
@@ -145,15 +145,15 @@ class FilterLineEdit(QtGui.QLineEdit):
             self.activated.emit(active)
             self._button.setEnabled(active)
             self.setProperty("isActive", active)
-            self.style().unpolish(self)        
+            self.style().unpolish(self)
             self.style().polish(self)
             self.update()
-        
+
 
 if __name__ == "__main__":
     import sys
     import os
-    
+
     packagepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     if not packagepath in sys.path:
         sys.path.append(packagepath)

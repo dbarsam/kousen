@@ -29,11 +29,11 @@ class MessageBox(__form_class__, __base_class__):
         self._setButtons(buttons)
         self._setDetails(details)
         self._setMessage(message)
-        self._setMinSize()        
+        self._setMinSize()
 
     def setupUi(self, widget):
         super(MessageBox, self).setupUi(widget)
-        
+
         self.buttonDetails.toggled.connect(self._toggleDetails)
 
     def _setIcon(self, pixmap):
@@ -71,8 +71,8 @@ class MessageBox(__form_class__, __base_class__):
 
         @param text  The raw details text.
         """
-        enable = bool(text)        
-        
+        enable = bool(text)
+
         self.texteditDetails.insertPlainText(text)
         self.texteditDetails.moveCursor(QtGui.QTextCursor.Start)
 
@@ -81,7 +81,7 @@ class MessageBox(__form_class__, __base_class__):
 
         self.buttonDetails.setChecked(False)
         self._toggleDetails(False)
-        
+
     def _setMinSize(self):
         """
         Internal method to manage the size of the MessageBox.
@@ -101,7 +101,7 @@ class MessageBox(__form_class__, __base_class__):
         icon = QtGui.QIcon()
         icon.addPixmap( pixmap )
 
-        self.buttonDetails.setIcon(icon)        
+        self.buttonDetails.setIcon(icon)
         self.buttonDetails.setText("Details...")
 
         self._setMinSize()
@@ -166,7 +166,7 @@ class MessageBox(__form_class__, __base_class__):
 
         @param parent    The MessageBox's parent window
         @param message   The MessageBox's main message
-        @param details   A raw text block to details in the 'details' section.  A value of None will remove the section.        
+        @param details   A raw text block to details in the 'details' section.  A value of None will remove the section.
         """
         return MessageBox(parent, message, details, "Kousen Information", QtGui.QStyle.SP_MessageBoxInformation, [QtGui.QDialogButtonBox.Ok]).show_()
 

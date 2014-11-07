@@ -15,7 +15,7 @@ class CameraNode(SceneGraphItem):
     __category__     = "Camera Node"
     __icon__         = ":/icons/camera.png"
 
-    # Camera default values 
+    # Camera default values
     __camera_target__   = Point3D(0, 0, 0)
     __camera_position__ = Point3D(21, 28, 21)
     __camera_upvector__ = Vector3D(0, 1, 0)
@@ -30,7 +30,7 @@ class CameraNode(SceneGraphItem):
     __camera_max_screen_rotation__ = 180.0
 
     def __init__(self, position=None, target=None, up=None, fov=None, znear=None, zfar=None, swidth=None, sheight=None, parent=None):
-        super(CameraNode, self).__init__({}, parent) 
+        super(CameraNode, self).__init__({}, parent)
         """
         Constructor.
 
@@ -75,7 +75,7 @@ class CameraNode(SceneGraphItem):
         self._screenheight = height
 
         self._rotationspeed = self.__camera_max_screen_rotation__ / self._screenminsize
-        self._pixelradians = math.radians(self._rotationspeed) 
+        self._pixelradians = math.radians(self._rotationspeed)
 
     def viewport(self, fov, width, height, znear):
         """
@@ -101,7 +101,7 @@ class CameraNode(SceneGraphItem):
         zright  =   0.5 * znear_width
         zbottom = - 0.5 * znear_height
         ztop    =   0.5 * znear_height
-        
+
         return (zleft, zright, zbottom, ztop)
 
     def tumble(self, hdelta, vdelta):

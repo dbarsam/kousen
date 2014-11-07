@@ -22,7 +22,7 @@ class Point3D(object):
         Convenience property for the 'x' value
 
         @returns The value stored for the 'x' component
-        """        
+        """
         return self._data[0]
 
     @property
@@ -65,7 +65,7 @@ class Point3D(object):
         Generates the "official" string representation of the Point3D
 
         @returns A string representation of the Point3D
-        """         
+        """
         return "{0}({p.x}, {p.y}, {p.z})".format(self.__class__.__name__, p=self)
 
     def __str__(self):
@@ -73,7 +73,7 @@ class Point3D(object):
         Generates the "informal" string representation of the Point3D.
 
         @returns A string representation of the Point3D
-        """         
+        """
         return "P({p.x}, {p.y}, {p.z})".format(p=self)
 
     def __add__(self, other):
@@ -82,7 +82,7 @@ class Point3D(object):
 
         @param   other An object implementing x, y, z compoments
         @returns       The Point sum.
-        """         
+        """
         return self.__class__( self.x+other.x, self.y+other.y, self.z+other.z )
 
     def __sub__(self,other):
@@ -105,7 +105,7 @@ class Point3D(object):
         @returns       True if the components are equal; false otherwise
         """
         return self.x==other.x and self.y==other.y and self.z==other.z
-    
+
     def __ne__(self,other):
         """
         Calculates the result of the rich comparison not equality opeeration.
@@ -121,7 +121,7 @@ class Point3D(object):
         Convenience property to access the raw data
 
         @returns The list of values
-        """ 
+        """
         return self._data
 
     def duplicate(self):
@@ -129,7 +129,7 @@ class Point3D(object):
         Copy Constructor.
 
         @returns Another Point with the same values as self
-        """     
+        """
         return self.__class__( self.x, self.y, self.z )
 
     def toVector3D(self):
@@ -144,10 +144,10 @@ class Point3D(object):
     def distance(self, other):
         """
         Calculates the distance between self and another point
-        
+
         @param   other An object implementing x, y, z compoments
         @returns The length of the vector calcaulted between self and another point
-        """     
+        """
         return (other-self).length()
 
     def midpoint(self, other):
@@ -155,6 +155,6 @@ class Point3D(object):
         Calculates the mid point between self and another point
 
         @returns A Point between self and aother point.
-        """  
+        """
         return self.__class__( (self.x+other.x)*0.5, (self.y+other.y)*0.5, (self.z+other.z)*0.5 )
- 
+

@@ -33,7 +33,7 @@ class MainWindow(__form_class__, __base_class__):
     def setupUi(self, widget):
         """
         Initializes the local state of the UI class.
-        
+
         @param widget The instance of the UI class.
         """
         super(MainWindow, self).setupUi(widget)
@@ -58,8 +58,8 @@ class MainWindow(__form_class__, __base_class__):
         self.propertyEditor.view.setAlternatingRowColors(True)
         self.propertyEditor.view.setEditTriggers(QtGui.QAbstractItemView.CurrentChanged)
         self.propertyEditor.view.setItemDelegateForColumn(PropertyItem.Fields.VALUE, ItemEditorFactoryDelegate(self.propertyEditor.view))
-        self.propertyEditor.push(PropertyModel(PropertyItem.Fields.headerdata(), self)) 
-        self.propertyEditor.push(TreeColumnFilterProxyModel())        
+        self.propertyEditor.push(PropertyModel(PropertyItem.Fields.headerdata(), self))
+        self.propertyEditor.push(TreeColumnFilterProxyModel())
 
         # Actions
         self.actionNewScene.triggered.connect(self._sceneNew)
@@ -86,7 +86,7 @@ class MainWindow(__form_class__, __base_class__):
 
         # Scene Graph Explorer's Scene Graph Model Views
         self.sceneExplorer.clear()
-        self.sceneExplorer.push(self._sceneGraph) 
+        self.sceneExplorer.push(self._sceneGraph)
         self.sceneExplorer.push(TreeColumnFilterProxyModel())
 
         # OpenGL Scene Graph Model View
@@ -160,7 +160,7 @@ class MainWindow(__form_class__, __base_class__):
         @param pos   The global position of the request.
         """
         menu = QtGui.QMenu()
-        
+
         nodes = self.sceneExplorer.selectedItems
         cameras = [n for n in nodes if type(n) is GLCameraNode]
         if any(c == self.sceneExplorer.source.activeCamera for c in cameras):
@@ -179,7 +179,7 @@ class MainWindow(__form_class__, __base_class__):
         @param selected   The new selection (which may be empty)
         @param deselected The previous selection (which may be empty)
         """
-        sourceDeselected = self.sceneExplorer.mapSelectionToSourceItem(deselected)        
+        sourceDeselected = self.sceneExplorer.mapSelectionToSourceItem(deselected)
         self.propertyEditor.source.removeProperties(sourceDeselected)
 
         sourceSelected = self.sceneExplorer.mapSelectionToSourceItem(selected)
@@ -191,7 +191,7 @@ class MainWindow(__form_class__, __base_class__):
 
         @param pos   The global position of the request.
         """
-        menu = QtGui.QMenu()       
+        menu = QtGui.QMenu()
         menu.exec_(QtGui.QCursor.pos())
 
     def _propertyEditorSelectionChanged(self, selected, deselected):

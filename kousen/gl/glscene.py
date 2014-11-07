@@ -97,7 +97,7 @@ class GLSceneModel(SceneGraphModel):
             childItem = parentItem.child(row)
             childItem.initializeGL()
             childItem.resizeGL(width, height)
-    
+
     def createRoot(self, *args):
         """
         Overrides the SceneGraphModel's createRoot method.
@@ -125,7 +125,7 @@ class GLSceneModel(SceneGraphModel):
 
         # Polygon Rasterization
         GL.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL)
-        
+
         # Polygon Anti-Aliasing
         GL.glEnable( GL.GL_POLYGON_SMOOTH )
 
@@ -140,17 +140,17 @@ class GLSceneModel(SceneGraphModel):
         GL.glEnable( GL.GL_DEPTH_TEST )
         GL.glDepthFunc( GL.GL_LEQUAL )
         GL.glDepthMask( GL.GL_TRUE )
-        
+
         # Enable Lighting and Custom Lights
         GL.glEnable( GL.GL_LIGHTING )
-        
+
         # Define Lights
         GL.glLightfv( GL.GL_LIGHT0, GL.GL_POSITION, [ 10.0, 10.0, 10.0, 1.0 ] )
         GL.glLightfv( GL.GL_LIGHT0, GL.GL_AMBIENT, [ 0.4, 0.4, 0.4, 1.0 ] )
         GL.glLightfv( GL.GL_LIGHT0, GL.GL_DIFFUSE, [ 0.4, 0.4, 0.4, 1.0 ] )
         GL.glLightfv( GL.GL_LIGHT0, GL.GL_SPECULAR, [ 1.0, 1.0, 1.0, 1.0 ] )
         GL.glEnable( GL.GL_LIGHT0 )
-        
+
         # Misc
         GL.glDisable( GL.GL_FOG )
         GL.glDisable( GL.GL_TEXTURE_2D )

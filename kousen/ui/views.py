@@ -18,8 +18,8 @@ class TreeView(QtGui.QTreeView):
 
         @param selected   The new selection (which may be empty)
         @param deselected The previous selection (which may be empty)
-        """        
+        """
         self.currentSelectionChanged.emit(selected, deselected)
-        
+
         super(TreeView, self).selectionChanged(selected, deselected)
- 
+

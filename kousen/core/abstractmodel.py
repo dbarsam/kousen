@@ -47,16 +47,16 @@ class AbstractData(QtCore.QObject):
 
     Internally the data is a dimentional dictionary, structured as:
         Data {
-            <ItemDataRole Key 0> : 
-            { 
+            <ItemDataRole Key 0> :
+            {
                 <Column Key 0> : <Column 0 Data>,
                 <Column Key 1> : <Column 1 Data>,
                 <Column Key 2> : <Column 2 Data>
                 ...
                 <Column Key N> : <Column N Data>
             }
-            <ItemDataRole Key 1> : 
-            { 
+            <ItemDataRole Key 1> :
+            {
                 <Column Key 0> : <Column 0 Data>,
                 <Column Key 1> : <Column 1 Data>,
                 <Column Key 2> : <Column 2 Data>
@@ -64,8 +64,8 @@ class AbstractData(QtCore.QObject):
                 <Column Key N> : <Column N Data>
             }
             ...
-            <ItemDataRole Key N> : 
-            { 
+            <ItemDataRole Key N> :
+            {
                 <Column Key 0> : <Column 0 Data>,
                 <Column Key 1> : <Column 1 Data>,
                 <Column Key 2> : <Column 2 Data>
@@ -78,11 +78,11 @@ class AbstractData(QtCore.QObject):
 
         value = data[<ItemDataRole Key>, <Column Key>]
 
-    or 
+    or
 
         data[<ItemDataRole Key>, <Column Key>] = value
 
-    The list of values for the Qt Item Data Role can be found here http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum    
+    The list of values for the Qt Item Data Role can be found here http://qt-project.org/doc/qt-4.8/qt.html#ItemDataRole-enum
     """
     # Extends the ItemDataRole
     FlagRole = int(QtCore.Qt.UserRole) + 1
@@ -101,7 +101,7 @@ class AbstractData(QtCore.QObject):
         """
         Return the length (the number of items) the data.
         """
-        # Use QtCore.Qt.DisplayRole as our column data role.        
+        # Use QtCore.Qt.DisplayRole as our column data role.
         return len(self._internal.get(QtCore.Qt.DisplayRole, {}))
 
     def __getitem__(self, ids):
@@ -109,7 +109,7 @@ class AbstractData(QtCore.QObject):
         The [] operator getter.  This is specialized to take a tuple (<ItemDataRole Key>, <Column Key>).
 
         Example:
-            
+
             value = data[<ItemDataRole Key>, <Column Key>]
 
         @param ids The lookup key consisting of (<ItemDataRole Key>, <Column Key>).
@@ -125,7 +125,7 @@ class AbstractData(QtCore.QObject):
         The [] operator setter.  This is specialized to take a tuple (<ItemDataRole Key>, <Column Key>).
 
         Example:
-            
+
             data[<ItemDataRole Key>, <Column Key>] = value
 
         @param ids The lookup key consisting of (<ItemDataRole Key>, <Column Key>).
@@ -166,7 +166,7 @@ class AbstractData(QtCore.QObject):
         Retrieve the data stored with the specific role.
 
         @param role An value of QtCore.Qt.ItemDataRole enum.
-        
+
         """
         return self._internal.get(role, {})
 
@@ -195,10 +195,10 @@ class AbstractData(QtCore.QObject):
 
 class AbstractDataItem(QtCore.QObject):
     """
-    The Data Item class provides a collection of static and virtual data to be used as a entry in a data model.  
-    
+    The Data Item class provides a collection of static and virtual data to be used as a entry in a data model.
+
     Static data is an instance of AbstractData and is cached locally.
-    
+
     Virtual data is managed by overloading the data() and setData() method of the model.
     """
     dataChanging = QtCore.Signal(object, object)
@@ -230,7 +230,7 @@ class AbstractDataItem(QtCore.QObject):
 
         """
         return self.setData(id, item)
- 
+
     def row(self):
         """
         Returns the row component of the QModelIndex of this item within the parent's child collection
@@ -241,14 +241,14 @@ class AbstractDataItem(QtCore.QObject):
             index = self.parent().itemIndex(self)
             if index and index.isValid():
                 return index.row()
- 
+
         return -1
 
     def size(self):
         """
         Returns number of data stored at this item.
 
-        @returns The length of the internal collection.        
+        @returns The length of the internal collection.
         """
         return len(self._staticdata)
 
@@ -256,7 +256,7 @@ class AbstractDataItem(QtCore.QObject):
         """
         Returns the id of data stored at this item.
 
-        @returns A valid id if found; -1 otherwise.  
+        @returns A valid id if found; -1 otherwise.
         """
         for i in range(self.size()):
             if self.data(i, role) == data:
@@ -273,7 +273,7 @@ class AbstractDataItem(QtCore.QObject):
         @returns The data if the lookup operation was succesful; False otherwise.
         """
         return self._staticdata[role, id]
- 
+
     def setData(self, id, value, role=QtCore.Qt.EditRole):
         """
         Sets the data for the corresponding id, filtered by the given role.
@@ -327,7 +327,7 @@ class AbstractDataItem(QtCore.QObject):
 class AbstractDataTreeItem(AbstractDataItem):
     """
     The Data Tree Item class provides extends the Data Item class with tree relationships between itself and Data Tree Items.
-    """    
+    """
     childAdded    = QtCore.Signal(object)
     childRemoved  = QtCore.Signal(object)
 
@@ -348,7 +348,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @returns True if the item is a root item; False otherwise.
         """
         return not bool(self.parent())
- 
+
     def row(self):
         """
         Returns the row component of the QModelIndex of this item within the parent's child collection
@@ -357,7 +357,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         """
         if self.parent():
             return self.parent().childPosition(self)
- 
+
         return 0
 
     def column(self):
@@ -376,7 +376,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         """
         self._children.append(item)
         self.childAdded.emit(item)
- 
+
     def insertChild(self, position, item):
         """
         Inserts a child item into the internal collection of children.
@@ -421,7 +421,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @returns True if the item has children; False otherwise.
         """
         return bool(self._children)
-     
+
     def childCount(self):
         """
         Returns number of children stored at this item.
@@ -429,7 +429,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @returns The number of children at this item.
         """
         return len(self._children)
- 
+
     def childPosition(self, child):
         """
         Returns the position of the given child AbstractDataTreeItem in the internal children list
@@ -612,7 +612,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         @returns A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             return item.flags(index.column())
         return QtCore.Qt.ItemIsEnabled
 
@@ -624,7 +624,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         @param value A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             item.setFlags(index, value)
 
     def insertFlags(self, value):
@@ -666,7 +666,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
- 
+
         if self._items[row]:
             return self.createIndex(row, column,  self._items[row])
         else:
@@ -695,7 +695,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         Returns the index for a given item
 
         @param A item already in the model.
-        @returns The QModelIndex of the lookup operation.        
+        @returns The QModelIndex of the lookup operation.
         """
         for r in range(len(self._items)):
             if self._items[r] == item:
@@ -731,7 +731,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
 
     def insertRows(self, position, rows=1, index=QtCore.QModelIndex()):
         """
-        Insert a rows with an empty DataItems into the model. 
+        Insert a rows with an empty DataItems into the model.
 
         @returns A list of respective QModelIndexes of the insert operation.
         """
@@ -755,10 +755,10 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         endIndex  = position + rows
         nextIndex = position
-        lastIndex = endIndex - 1        
+        lastIndex = endIndex - 1
         self.beginRemoveRows(QtCore.QModelIndex(), nextIndex, lastIndex)
-        
-        # Reverse sort to iterate and delete at the same 
+
+        # Reverse sort to iterate and delete at the same
         for i in sorted(range(nextIndex, endIndex), reverse=True):
             self._itemRemovePosition(i)
 
@@ -773,7 +773,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
 
     def reload(self, *args):
         """
-        Method to generate the internal data items.  
+        Method to generate the internal data items.
 
         @param args Optional arguments that affects data generation.
         """
@@ -791,7 +791,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         @param parent     The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
         """
         super(AbstractDataTreeModel, self).__init__(parent)
- 
+
         self._root  = self.createRoot(headerData)
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
@@ -828,7 +828,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
 
         @param parent    The parent item that will contain the new item in its internal collection.
         @param item      The item to insert into the parent's internal collection.
-        @param position  The position where the insertion operation will take place in the parent's internal collection 
+        @param position  The position where the insertion operation will take place in the parent's internal collection
         """
         parent.insertChild(position, item)
         item.setParent(parent)
@@ -902,7 +902,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         parentItem = self.item(parent)
         return parentItem.columnCount()
- 
+
     def rowCount(self, parent=QtCore.QModelIndex()):
         """
         Returns the number of rows in this model.
@@ -916,10 +916,10 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         if not index.isValid():
             return None
- 
+
         item = self.item(index)
         return item.data(index.column(), role) if item else None
- 
+
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         """
         Sets the model data at a given index, filtered by the given role to the value.
@@ -927,7 +927,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         item = self.item(index)
         if not item:
             return False
-        
+
         if not item.setData(index.column(), value, role):
             return False
 
@@ -941,7 +941,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         @returns A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             return item.flags(index.column())
         return QtCore.Qt.NoItemFlags
 
@@ -953,7 +953,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         @param value A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             item.setFlags(index.column(), value)
 
     def insertFlags(self, value):
@@ -983,9 +983,9 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         if orientation == QtCore.Qt.Horizontal:
             return self._root.data(section, role)
- 
+
         return None
- 
+
     def index(self, row, column, parent = QtCore.QModelIndex()):
         """
         Returns the index of the internal data item in the model specified by the given row, column and parent index.
@@ -998,15 +998,15 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
- 
+
         parentItem = self.item(parent)
- 
+
         childItem = parentItem.child(row)
         if childItem:
             return self.createIndex(row, column, childItem)
         else:
             return QtCore.QModelIndex()
- 
+
     def item(self, index):
         """
         Returns the internal data item given the index
@@ -1026,7 +1026,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         Returns the index for a given item
 
         @param A item already in the model.
-        @returns The QModelIndex of the lookup operation.        
+        @returns The QModelIndex of the lookup operation.
         """
         if item == self._root:
             return QtCore.QModelIndex()
@@ -1036,22 +1036,22 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
     def parent(self, index):
         """
         Returns the parent index of an index of an internal data item
-        
+
         @param index The QModelIndex to be used in lookup
         @returns the QModelIndex of the resopetcive parentItem
         @note   Required for QAbstractItemModel implementation
         """
         if not index.isValid():
             return QtCore.QModelIndex()
- 
+
         childItem = index.internalPointer()
         parentItem = childItem.parent()
- 
+
         if parentItem == self._root:
             return QtCore.QModelIndex()
- 
+
         return self.createIndex(parentItem.row(), parentItem.column(), parentItem)
- 
+
     def appendItem(self, item, parent=QtCore.QModelIndex()):
         """
         Appends an existing AbstractDataTreeItem into the model.
@@ -1092,7 +1092,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         parentItem = self.item(parent)
         endIndex   = position + rows
         nextIndex  = position
-        lastIndex  = endIndex - 1 
+        lastIndex  = endIndex - 1
         items = []
         self.beginInsertRows(parent, nextIndex, lastIndex)
 
@@ -1109,10 +1109,10 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         parentItem = self.item(parent)
         endIndex   = position + rows
         nextIndex  = position
-        lastIndex  = endIndex - 1 
+        lastIndex  = endIndex - 1
 
         self.beginRemoveRows(parent, nextIndex, lastIndex)
-        
+
         for i in sorted(range(nextIndex, endIndex), reverse=True):
             self._itemRemovePosition(parentItem, i)
 
@@ -1128,7 +1128,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
 
     def reload(self, *args):
         """
-        Method to generate the internal data items.  
+        Method to generate the internal data items.
 
         @param args Optional arguments that affects data generation.
         """
@@ -1137,7 +1137,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
 class AbstractDataTableModel(QtCore.QAbstractTableModel):
     """
     The Data Table model provides a Table Item model implementation of a QAbstractTableModel.
-    """    
+    """
 
     def __init__(self, headerHorData=AbstractData(), headerVerData=AbstractData(), parent=None):
         """
@@ -1149,8 +1149,8 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         super(AbstractDataTableModel, self).__init__(parent)
 
-        self._headerData = { 
-            QtCore.Qt.Horizontal: headerHorData if isinstance(headerHorData, AbstractData) else AbstractData.BuildData(headerHorData), 
+        self._headerData = {
+            QtCore.Qt.Horizontal: headerHorData if isinstance(headerHorData, AbstractData) else AbstractData.BuildData(headerHorData),
             QtCore.Qt.Vertical:   headerVerData if isinstance(headerVerData, AbstractData) else AbstractData.BuildData(headerVerData)
         }
         self._items = []
@@ -1275,7 +1275,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         @returns A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             return item.flags(index.column())
         return QtCore.Qt.ItemIsEnabled
 
@@ -1287,7 +1287,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         @param value A valid combination of the QtCore.Qt.QFlags enum.
         """
         item = self.item(index)
-        if item:           
+        if item:
             item.setFlags(index.column(), value)
 
     def insertFlags(self, value):
@@ -1333,7 +1333,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         if not self.hasIndex(row, column, parent):
             return QtCore.QModelIndex()
- 
+
         if self._items[row]:
             return self.createIndex(row, column, self._items[row])
         else:
@@ -1362,7 +1362,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         Returns the index for a given item
 
         @param A item already in the model.
-        @returns The QModelIndex of the lookup operation.        
+        @returns The QModelIndex of the lookup operation.
         """
         for r in range(len(self._items)):
             if self._items[r] == item:
@@ -1402,7 +1402,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
 
     def insertRows(self, position, rows=1, index=QtCore.QModelIndex()):
         """
-        Insert a rows with an empty DataItems into the model. 
+        Insert a rows with an empty DataItems into the model.
         """
         endIndex  = position + rows
         nextIndex = position
@@ -1426,8 +1426,8 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         nextIndex = position
         lastIndex = endIndex - 1
         self.beginRemoveRows(QtCore.QModelIndex(), nextIndex, lastIndex)
-        
-        # Reverse sort to iterate and delete at the same 
+
+        # Reverse sort to iterate and delete at the same
         for i in sorted(range(nextIndex, endIndex), reverse=True):
             self._itemRemovePosition(i)
 
@@ -1442,7 +1442,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
 
     def reload(self, *args):
         """
-        Method to generate the internal data items.  
+        Method to generate the internal data items.
 
         @param args Optional arguments that affects data generation.
         """
@@ -1452,14 +1452,14 @@ class AbstractDataChangeValueCommand(QtGui.QUndoCommand):
 
     def __init__(self, index, value, model, text=None, parent=None):
         super(ChangeValueCommand, self).__init__(text, parent)
-        
+
         self._model = model
 
         self._row = index.row()
         self._col = index.column()
         self._oldvalue = index.data(QtCore.Qt.DisplayRole)
         self._newvalue = value
-        
+
         if not text:
             self.setText("({0},{1}) => [{2}] to [{3}]".format(self._row, self._col, self._oldvalue, self._newvalue))
 

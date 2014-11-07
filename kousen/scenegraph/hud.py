@@ -31,7 +31,7 @@ class CameraHUDNode(SceneGraphItem):
         @param camera   An instance of CameraNode to monitor.
         @param parent   The parent SceneGraphItem instance.
         """
-        super(CameraHUDNode, self).__init__({}, parent) 
+        super(CameraHUDNode, self).__init__({}, parent)
         self._left   = self.__screen_left__
         self._right  = self.__screen_right__
         self._top    = self.__screen_top__
@@ -44,7 +44,7 @@ class CameraHUDNode(SceneGraphItem):
         self._camera = camera
 
         self._staticdata[QtCore.Qt.DisplayRole, SceneGraphItem.Fields.NAME]        = "CameraHUD"
-        self._staticdata[QtCore.Qt.DecorationRole, SceneGraphItem.Fields.NAME]     = QtGui.QIcon(QtGui.QPixmap(self.__icon__))  
+        self._staticdata[QtCore.Qt.DecorationRole, SceneGraphItem.Fields.NAME]     = QtGui.QIcon(QtGui.QPixmap(self.__icon__))
         self._staticdata[QtCore.Qt.ToolTipRole, SceneGraphItem.Fields.NAME]        = "CameraHUD"
         self._staticdata[QtCore.Qt.AccessibleTextRole, SceneGraphItem.Fields.NAME] = "CameraHUD"
         self._staticdata[QtCore.Qt.EditRole, SceneGraphItem.Fields.NAME]           = "CameraHUD"
@@ -55,16 +55,16 @@ class CameraHUDNode(SceneGraphItem):
         Convenience property to access the monitored Camera Node.
 
         @returns An instance of a CameraNode if valid; None otherwise.
-        """ 
+        """
         return self._camera
-    
+
     @camera.setter
     def camera(self, value):
         """
         Convenience property to access the monitored Camera Node.
 
         @param value An instance of a CameraNode.
-        """ 
+        """
         self._camera = value
 
     def resize(self, width, height):
@@ -73,7 +73,7 @@ class CameraHUDNode(SceneGraphItem):
 
         @param width  The width (in pixels) of the virtual screen.
         @param height The height (in pixels) of the virtual screen.
-        """ 
+        """
         self._left   = 0
         self._right  = width
         self._top    = 0

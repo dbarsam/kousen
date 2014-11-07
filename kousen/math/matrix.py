@@ -6,7 +6,7 @@ from kousen.math.vector import Vector3D
 class Matrix4x4(object):
     """
     Matrix4x4 provides a simplified but self contained 4x4 Matrix class.
-    
+
     @warning The Matrix4x4 is Column Major.
     """
     def __init__(self):
@@ -22,7 +22,7 @@ class Matrix4x4(object):
         @returns A string representation of the Matrix4x4
         """
         return "{0}{1}".format(Matrix4x4.__name__, self._data)
-    
+
     def __str__(self):
         """
         Generates the "informal" string representation of the Matrix4x4.
@@ -90,7 +90,7 @@ class Matrix4x4(object):
 
         @param vector3D The translation Vector3D.
         @returns A Matrix4x4 Translation Matrix
-        """  
+        """
         M = Matrix4x4()
         M[ 0] = 1.0;   M[ 4] = 0.0;   M[ 8] = 0.0;   M[12] = vector3D.x;
         M[ 1] = 0.0;   M[ 5] = 1.0;   M[ 9] = 0.0;   M[13] = vector3D.y;
@@ -107,7 +107,7 @@ class Matrix4x4(object):
         @param axisVector     The axis (normalized) of the Axis-Angle rotation.
         @param originPoint    The origin point of the Axis-Angle rotation; if None assume the origin (0,0,0).
         @returns A Matrix4x4 Rotation Matrix
-        """ 
+        """
         # Note: assumes axisVector is normalized
         c = math.cos( angleInRadians )
         s = math.sin( angleInRadians )
@@ -146,7 +146,7 @@ class Matrix4x4(object):
         @param scaleFactor    The scalar factor of the scale.
         @param originPoint    The origin point of the scale; if None assume the origin (0,0,0).
         @returns A Matrix4x4 Rotation Matrix
-        """ 
+        """
         M = Matrix4x4()
         M[ 0] = scaleFactor; M[ 4] = 0.0;         M[ 8] = 0.0;         M[12] = 0.0;
         M[ 1] = 0.0;         M[ 5] = scaleFactor; M[ 9] = 0.0;         M[13] = 0.0;
@@ -172,7 +172,7 @@ class Matrix4x4(object):
         @see http://stackoverflow.com/questions/349050/calculating-a-lookat-matrix
         @see http://processing.org/reference/camera_.html
         @see http://www.cs.rutgers.edu/~decarlo/428/glu_man/lookat.html
-        """ 
+        """
         # step one: generate a rotation matrix
 
         # Compute our new look at vector, which will be the new Z axis of our transformed object.
@@ -197,7 +197,7 @@ class Matrix4x4(object):
 
             # step two: premultiply by a translation matrix
             return Matrix4x4.translation( eyePoint.toVector3D() ) * M
-        
+
         # the rotation matrix
         M[ 0] = x.x;   M[ 4] = x.y;   M[ 8] = x.z;   M[12] = 0.0;
         M[ 1] = y.x;   M[ 5] = y.y;   M[ 9] = y.z;   M[13] = 0.0;
@@ -213,7 +213,7 @@ class Matrix4x4(object):
         Convenience property to access the raw data
 
         @returns The list of values
-        """ 
+        """
         return self._data
 
     def duplicate(self):
@@ -221,7 +221,7 @@ class Matrix4x4(object):
         Copy Constructor.
 
         @returns Another Matrix4x4 with the same values as self
-        """  
+        """
         M = Matrix4x4()
         M._data = list(self._data)
         return M
@@ -229,7 +229,7 @@ class Matrix4x4(object):
     def init(self):
         """
         Initializes the internal data to the Identity Matrix.
-        """  
+        """
         self._data = [ 1.0, 0.0, 0.0, 0.0,
                    0.0, 1.0, 0.0, 0.0,
                    0.0, 0.0, 1.0, 0.0,

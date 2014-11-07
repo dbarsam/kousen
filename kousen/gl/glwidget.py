@@ -35,7 +35,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         #cursor_pixmap = QtGui.QPixmap(self.__camera_roll__)
         #cursor_pixmap.setMask(cursor_pixmap.mask())
         #self._cursor_roll = QtGui.QCursor(cursor_pixmap.scaledToHeight(32))
-        
+
     def setModel(self, model):
         self._model = model
         self.initializeGL()
@@ -47,7 +47,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         """
         self.setFocus()
         self.grabKeyboard()
-        
+
     def leaveEvent(self, event):
         """
         Override the QtGui.QWidget the leaveEvent.
@@ -104,7 +104,7 @@ class GLWidget(QtOpenGL.QGLWidget):
             self._model.activeCamera.dolly( - event.delta()  )
             self.updateGL()
 
-    def mousePressEvent(self, event):   
+    def mousePressEvent(self, event):
         """
         Overriden event handler to receive mouse press events for the widget.
 
@@ -131,7 +131,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         #        if event.buttons() & QtCore.Qt.RightButton:
         #            self.setCursor(QtGui.QCursor(QtCore.Qt.UpArrowCursor))
 
-    def mouseReleaseEvent(self, event):   
+    def mouseReleaseEvent(self, event):
         """
         Overriden event handler to receive mouse press events for the widget.
 
@@ -144,7 +144,7 @@ class GLWidget(QtOpenGL.QGLWidget):
         Overriden event handler to receive mouse move events for the widget.
 
         @param event A QMouseEvent reflecting the mouse move events.
-        """        
+        """
         if not (event.buttons() & QtCore.Qt.NoButton):
             # User is dragging a mouse click
             delta_x = event.x() - self._mousex
@@ -167,7 +167,7 @@ class GLWidget(QtOpenGL.QGLWidget):
                         delta_x, delta_y = self._mouselock(delta_x, delta_y)
                 else:
                     self._mouselock = None
-                
+
                 #QtGui.QToolTip.showText(event.globalPos(), "{0}, {1}".format(event.x(), event.y()), self, self.rect())
 
                 if event.buttons() & QtCore.Qt.LeftButton:

@@ -50,6 +50,6 @@ class GLCameraNode(GLNode, CameraNode):
         GLNode.projectionGL(self)
 
         GL.glFrustum(self._viewport[0], self._viewport[1], self._viewport[2], self._viewport[3], self._znear, self._zfar)
-        
+
         self.transformation = Matrix4x4.lookAt(self._position, self._target, self._up, False)
         GL.glMultMatrixf(self.transformation.data)

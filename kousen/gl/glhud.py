@@ -23,7 +23,7 @@ class GLCameraHUDNode(GLNode, CameraHUDNode):
         """
         super(GLCameraHUDNode, self).__init__(camera, parent)
         self._gnomon = QuadricGnomon(0.4, self)
-             
+
     def paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.

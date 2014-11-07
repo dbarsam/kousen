@@ -3,7 +3,7 @@ from OpenGL import GLU
 
 class GLUQuadricScope(object):
     """
-    GLUQuadricScope provides a context manager for a GLU.Quadric operations 
+    GLUQuadricScope provides a context manager for a GLU.Quadric operations
     """
     def __init__(self):
         pass

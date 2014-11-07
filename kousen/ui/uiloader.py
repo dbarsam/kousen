@@ -44,11 +44,11 @@ class UiLoader(QUiLoader):
         parsed = xml.parse(uifile)
         widget_class = parsed.find('widget').get('class')
         form_class = parsed.find('class').text
-    
+
         with open(uifile, 'r') as f:
             o = StringIO()
             frame = {}
-            
+
             pysideuic.compileUi(f, o, indent=0)
             pyc = compile(o.getvalue(), '<string>', 'exec')
 

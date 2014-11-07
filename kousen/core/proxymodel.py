@@ -23,7 +23,7 @@ class ColumnFilterProxyModel(QtGui.QSortFilterProxyModel):
         """
         #Get the fileinfo of the item
         model = self.sourceModel()
-        
+
         # Extract the Column and the Column's value and apply the filter function.
         # We currently filter on the raw data (UserRole) not the DisplayData
         for columnIndex in self.__columnFilter:
@@ -62,17 +62,17 @@ class ColumnFilterDataProxyModel(QtGui.QSortFilterProxyModel):
     def filterAcceptsIndex(self, index):
         """
         Applies QSortFilterProxyModel filtering algorithm on an index cell instead of a row.
-        """        
+        """
         if self.filterRegExp().isEmpty():
             return True
-        
+
         if self.filterKeyColumn() >= 0 and index.column() != self.filterKeyColumn():
             return True
 
         data = super(ColumnFilterDataProxyModel, self).data(index, self.filterRole())
         if not data:
             return False
-        
+
         return self.filterRegExp().indexIn(str(data)) >= 0
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
@@ -97,22 +97,22 @@ class TreeColumnFilterProxyModel(ColumnFilterProxyModel):
         @param sourceModel The initial source model.
         """
         super(TreeColumnFilterProxyModel, self).__init__(parent)
- 
+
     def filterAcceptsRow(self, sourceRow, sourceParent):
         """
         Overridden method to returns true if the item in the row indicated by the given source_row and source_parent should be included in the model; otherwise returns false.
         """
         # Test the row via the base class.
-        if super(TreeColumnFilterProxyModel, self).filterAcceptsRow(sourceRow, sourceParent): 
+        if super(TreeColumnFilterProxyModel, self).filterAcceptsRow(sourceRow, sourceParent):
             return True
 
         model = self.sourceModel()
         index = model.index(sourceRow, 0, sourceParent)
-        
+
         # Test Root - Root Is Always Valid
         if not index.isValid():
             return True
-        
+
         # Test the Children
         return any(self.filterAcceptsRow(i, index) for i in range(index.model().rowCount(index)))
 
@@ -146,9 +146,9 @@ class UndoRedoProxyModel(QtGui.QSortFilterProxyModel):
             return false
         if value == index.data(role):
             return false
-        
+
         command = ProxySetDataCommand(index, value, role, self)
         self._undostack(command)
-        
+
         item = self.item(index)
         return item.setData(index.column(), value, role) if item else False

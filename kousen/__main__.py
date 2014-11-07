@@ -6,7 +6,7 @@ import PySide
 def main():
     """
     The main entry point for Kousen
-    """    
+    """
     import kousen.resources_rc
     from kousen.ui.mainwindow import MainWindow
 

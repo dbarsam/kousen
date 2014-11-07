@@ -28,7 +28,7 @@ class TranslationNode(SceneGraphItem):
         Convenience property to access the Translation Node translation vector.
 
         @returns An instance of a Vector3D if valid; None otherwise.
-        """ 
+        """
         return self._translation
 
     @translation.setter
@@ -37,7 +37,7 @@ class TranslationNode(SceneGraphItem):
         Convenience property to access the Translation Node translation vector.
 
         @param value An instance of a Vector3D.
-        """ 
+        """
         self._translation = value
         self._matrix = Matrix4x4.translation(self._translation)
 
@@ -71,7 +71,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node axis vector.
 
         @returns An instance of a Vector3D if valid; None otherwise.
-        """ 
+        """
         return self._axis
 
     @axis.setter
@@ -80,7 +80,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node axis vector.
 
         @param value An instance of a Vector3D.
-        """ 
+        """
         self._axis = value
         self._matrix = Matrix4x4.rotation(self._angle, self._axis, self._point)
 
@@ -90,7 +90,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node rotation angle (radians).
 
         @returns An rotation angle in radians.
-        """ 
+        """
         return self._angle
 
     @angle.setter
@@ -99,7 +99,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node rotation angle (radians).
 
         @param value An rotation angle in radians.
-        """ 
+        """
         self._angle = value
         self._matrix = Matrix4x4.rotation(self._angle, self._axis, self._point)
 
@@ -109,7 +109,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node rotation point.
 
         @returns An instance of a Point3D if valid; None otherwise.
-        """ 
+        """
         return self._point
 
     @point.setter
@@ -118,7 +118,7 @@ class RotationNode(SceneGraphItem):
         Convenience property to access the Rotation Node rotation point.
 
         @param value An instance of a Point3D.
-        """ 
+        """
         self._point = value
         self._matrix = Matrix4x4.rotation(self._angle, self._axis, self._point)
 
@@ -150,7 +150,7 @@ class ScaleNode(SceneGraphItem):
         Convenience property to access the Scale Node scale factor.
 
         @returns The scale factor.
-        """ 
+        """
         return self._factor
 
     @factor.setter
@@ -159,7 +159,7 @@ class ScaleNode(SceneGraphItem):
         Convenience property to access the Scale Node scale factor.
 
         @param value The scale factor.
-        """ 
+        """
         self._factor = value
         self._matrix = Matrix4x4.scale(self._factor, self._point)
 
@@ -169,7 +169,7 @@ class ScaleNode(SceneGraphItem):
         Convenience property to access the Scale Node scale point.
 
         @returns An instance of a Point3D if valid; None otherwise.
-        """ 
+        """
         return self._point
 
     @point.setter
@@ -178,6 +178,6 @@ class ScaleNode(SceneGraphItem):
         Convenience property to access the Scale Node scale point.
 
         @param value An instance of a Point3D.
-        """ 
+        """
         self._point = value
         self._matrix = Matrix4x4.scale(self._angle, self._axis, self._point)

@@ -23,7 +23,7 @@ class ItemDialog(__form_class__, __base_class__):
 
         @param parent    The ItemDialog's parent window
         """
-        super(ItemDialog, self).__init__(parent, QtCore.Qt.MSWindowsFixedSizeDialogHint | QtCore.Qt.WindowTitleHint)        
+        super(ItemDialog, self).__init__(parent, QtCore.Qt.MSWindowsFixedSizeDialogHint | QtCore.Qt.WindowTitleHint)
         self.setupUi(self)
 
     def setupUi(self, widget):
@@ -45,7 +45,7 @@ class ItemCreationDialog(ItemDialog):
 
     def setupUi(self, widget):
         super(ItemDialog, self).setupUi(widget)
-        self.treewidget.push(SceneGraphTypeTreeModel(SceneGraphType.Fields.headerdata(), self)) 
+        self.treewidget.push(SceneGraphTypeTreeModel(SceneGraphType.Fields.headerdata(), self))
         self.treewidget.push(TreeColumnFilterProxyModel())
         self.treewidget.reload()
         self.treewidget.immediate = True

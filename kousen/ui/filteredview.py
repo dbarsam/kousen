@@ -51,7 +51,7 @@ class FilteredView(__base_class__, __form_class__):
         regexp = QtCore.QRegExp(text if text else self.filterString.text(), QtCore.Qt.CaseInsensitive)
         proxies = self.proxies
         if self.proxies:
-            for p in reversed(proxies): 
+            for p in reversed(proxies):
                 p.setFilterRegExp(regexp)
         self.view.viewport().update()
 
@@ -90,7 +90,7 @@ class FilteredView(__base_class__, __form_class__):
         Convenience property to access the source view.
 
         @param value The view value.
-        """  
+        """
         self.setView(value)
 
     @property
@@ -144,7 +144,7 @@ class FilteredView(__base_class__, __form_class__):
         Sets the display label text.
 
         @param text The text value.
-        """ 
+        """
         self.filterLabel.setVisible(bool(text))
         self.filterLabel.setText(text or "")
         self._updateLayout()
@@ -155,7 +155,7 @@ class FilteredView(__base_class__, __form_class__):
         Gets the reloadable state.
 
         @param True if the model can clear regenerate its item; False otherwise.
-        """  
+        """
         return self.buttonReload.isVisible()
 
     @reloadable.setter
@@ -164,7 +164,7 @@ class FilteredView(__base_class__, __form_class__):
         Sets the reloadable state.
 
         @param value The new reloadable state value.
-        """  
+        """
         self.buttonReload.setVisible(value)
         self._updateLayout()
 
@@ -174,7 +174,7 @@ class FilteredView(__base_class__, __form_class__):
         Gets the immediate filtering state.
 
         @param True if filtering will happen immediately; False if the filtering will occur after a loss of focus.
-        """  
+        """
         return self._immediate
 
     @immediate.setter
@@ -183,7 +183,7 @@ class FilteredView(__base_class__, __form_class__):
         Sets  the immediate filtering state.
 
         @param value The new immediate state value.
-        """  
+        """
         self._immediate = value
         # Was never connected; PyQt raises TypeError, PySide raises RuntimeError
         try:
@@ -227,7 +227,7 @@ class FilteredView(__base_class__, __form_class__):
         Gets a list of source data indexes currently selected in the view
 
         @returns A list of model data indexes.
-        """ 
+        """
         selection = self.view.selectedIndexes()
         return [self.mapToSource(mi) for mi in selection]
 
@@ -237,8 +237,8 @@ class FilteredView(__base_class__, __form_class__):
         Sets a list of source data items as the current selection in the view.
 
         @params A list of model data items.
-        """ 
-        selection = QtGui.QItemSelection()        
+        """
+        selection = QtGui.QItemSelection()
         selection.append([QtGui.QItemSelectionRange(index) for index in indexes])
         selection = self.mapSelectionFromSource( selection )
         self.view.selectionModel().select(selection, QtGui.QItemSelectionModel.ClearAndSelect)
@@ -249,7 +249,7 @@ class FilteredView(__base_class__, __form_class__):
         Gets a list of source data items currently selected in the view
 
         @returns A list of model data items.
-        """ 
+        """
         selection = self.selectedIndexes
         items     = [self.source.item( mi ) for mi in selection]
         uitems    = set()
@@ -261,8 +261,8 @@ class FilteredView(__base_class__, __form_class__):
         Sets a list of source data items as the current selection in the view.
 
         @params A list of model data items.
-        """ 
-        selection = QtGui.QItemSelection()        
+        """
+        selection = QtGui.QItemSelection()
         selection.append([QtGui.QItemSelectionRange(self.model.itemIndex(item)) for item in items])
         selection = self.mapSelectionFromSource( selection )
         self.view.selectionModel().select(selection, QtGui.QItemSelectionModel.ClearAndSelect)
@@ -281,7 +281,7 @@ class FilteredView(__base_class__, __form_class__):
             if isinstance(self.viewWidget, QtGui.QAbstractItemView):
                 current = self.viewWidget.model()
                 self.viewWidget.setModel(None)
-        
+
         if view:
             self.layout().addWidget(view)
             if isinstance(view, QtGui.QAbstractItemView):
@@ -316,7 +316,7 @@ class FilteredView(__base_class__, __form_class__):
 
             # The model goes to the 'top' of the stack
             self.view.setModel(model)
-        
+
         self._stack.append(model)
 
     def pop(self):
@@ -329,7 +329,7 @@ class FilteredView(__base_class__, __form_class__):
             return None
 
         current = self._stack.pop()
-        
+
         if self.view:
             # Remove the current model (if any)
             if current != self.view.model():
@@ -426,7 +426,7 @@ class FilteredView(__base_class__, __form_class__):
         Sets the current selection in the view.
 
         @condition A lambda expression to be evaluated on each item.
-        """ 
+        """
         self.selectedItems = [item for item in self.items if condition(item)]
 
 class FilteredList(FilteredView):
@@ -464,9 +464,9 @@ if __name__ == "__main__":
     class ExampleDataItem(AbstractDataItem):
         def __init__(self, data=[], parent=None):
             super(ExampleDataItem, self).__init__(data, parent)
-        
+
         def data(self, id, role=QtCore.Qt.DisplayRole):
-        
+
             if role == QtCore.Qt.DisplayRole:
                 return "{0},{1}".format(self.row(), id)
 
@@ -478,7 +478,7 @@ if __name__ == "__main__":
     class ExampleDataListModel(AbstractDataListModel):
 
         def __init__(self, data, parent=None):
-            super(ExampleDataListModel, self).__init__(parent)       
+            super(ExampleDataListModel, self).__init__(parent)
 
         def createItem(self, *args):
             return ExampleDataItem(*args)
@@ -494,7 +494,7 @@ if __name__ == "__main__":
         TotalColumns = 10
 
         def __init__(self, data, parent=None):
-            super(ExampleDataTableModel, self).__init__(data, {}, parent)       
+            super(ExampleDataTableModel, self).__init__(data, {}, parent)
 
         def createItem(self, *args):
             return ExampleDataItem(*args)
@@ -510,7 +510,7 @@ if __name__ == "__main__":
         TotalColumns = 4
 
         def __init__(self, data, parent=None):
-            super(ExampleDataListModel, self).__init__(parent)       
+            super(ExampleDataListModel, self).__init__(parent)
 
         def createItem(self, *args):
             return ExampleDataItem(*args)
@@ -525,11 +525,11 @@ if __name__ == "__main__":
     class ExampleDataTreeItem(AbstractDataTreeItem):
         def __init__(self, data=[], parent=None):
             super(ExampleDataTreeItem, self).__init__(data, parent)
-        
+
             self._databuffer = 4
 
         def data(self, id, role=QtCore.Qt.DisplayRole):
-        
+
             if self.isRoot():
                 return super(ExampleDataTreeItem, self).data(id, role)
 
@@ -558,7 +558,7 @@ if __name__ == "__main__":
         TotalColumns = 4
 
         def __init__(self, data, parent=None):
-            super(ExampleDataTreeModel, self).__init__(data, parent)       
+            super(ExampleDataTreeModel, self).__init__(data, parent)
 
         def createRoot(self, *args):
             return ExampleDataTreeItem(*args)
@@ -588,7 +588,7 @@ if __name__ == "__main__":
     app = QtGui.QApplication.instance()
     if not app: app = QtGui.QApplication([])
 
-    # Tree Example: 
+    # Tree Example:
     # Tree View -> Data Proxy -> Filter Proxy -> Tree Model
     tree = FilteredTree()
     tree.push(ExampleDataTreeModel(["Tree Header {0}".format(i) for i in range(ExampleDataTreeModel.TotalColumns)]))
@@ -596,7 +596,7 @@ if __name__ == "__main__":
     tree.proxy.setFilterKeyColumn(-1)
     tree.push(ColumnFilterDataProxyModel())
     tree.proxy.setFilterData(QtCore.Qt.BackgroundRole, QtGui.QBrush(QtGui.QColor(224,91,49)))  #orange
-    tree.proxy.setFilterData(QtCore.Qt.ForegroundRole, QtGui.QBrush( QtGui.QColor(0,0,0) ))  #not orange    
+    tree.proxy.setFilterData(QtCore.Qt.ForegroundRole, QtGui.QBrush( QtGui.QColor(0,0,0) ))  #not orange
     tree.proxy.setFilterKeyColumn(-1)
     tree.label = "Example Tree"
     tree.immediate = False
@@ -613,7 +613,7 @@ if __name__ == "__main__":
 
     # List Example:
     # ListTree View -> Filter Proxy -> Filter Model
-    table = FilteredTable()   
+    table = FilteredTable()
     table.push(ExampleDataTableModel(["Table Header {0}".format(i) for i in range(ExampleDataTableModel.TotalColumns)]))
     table.push(ColumnFilterProxyModel())
     table.proxy.setFilterKeyColumn(-1)
