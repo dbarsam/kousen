@@ -221,13 +221,17 @@ class AbstractDataItem(QtCore.QObject):
         The [] operator getter.
 
         @param id The lookup key to the data.
+        @exception IndexError if no data is associated with the id.
         """
+        if not self.hasData(id):
+            raise IndexError()
         return self.data(id)
 
     def __setitem__(self, id, item):
         """
         The [] operator setter.
-
+        @param id The lookup ke to the data
+        @param item The data to associate with the id.
         """
         return self.setData(id, item)
 
@@ -287,6 +291,16 @@ class AbstractDataItem(QtCore.QObject):
         self.dataChanged.emit(id, role)
 
         return True
+
+    def hasData(self, id, role=QtCore.Qt.DisplayRole):
+        """
+        Queries if data exists for the id, role combination.
+
+        @param id The lookup key to the data.
+        @param role The filter key of the lookup operation.
+        @returns True if data exists; False otherwise.
+        """
+        return self._staticdata[role, id] == None
 
     def flags(self, id):
         """
