@@ -61,7 +61,15 @@ class Vector3D(object):
         @param index The lookup index to the internal data.
         @returns      The data if the lookup operation was succesful; None otherwise.
         """
-        return self._data[index] if index < len(self._data) else None
+        if index >= len(self._data):
+            raise IndexError()
+        return self._data[index]
+
+    def __iter__(self):
+        """
+        Return an iterator object.
+        """
+        return iter(self._data)
 
     def __repr__(self):
         """
