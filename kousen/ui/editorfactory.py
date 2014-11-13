@@ -4,51 +4,66 @@ from kousen.ui.lineedit import ColorLineEdit
 
 class ColorEditor(ColorLineEdit):
     """
-    The ColorEditor class provides a modified ColorLineEdit with a QProperty as required by QItemEditorFactory.
+    The ColorEditor class provides a modified ColorLineEdit with a QtCore.Property as required by QItemEditorFactory.
     """
-    color = QtCore.Property('QColor', ColorLineEdit.getColor, ColorLineEdit.setColor, user=True)
+    qproperty = QtCore.Property('QColor', ColorLineEdit.getColor, ColorLineEdit.setColor, user=True)
 
     def __init__(self, parent=None):
         """
         Constructor
+
+        @param parent The parent widget of this widget.
         """
         super(ColorEditor, self).__init__(parent)
+        self.setFrame(False)
 
-class ColorEditorCreator(QtGui.QItemEditorCreatorBase):
+class ItemEditorCreator(QtGui.QItemEditorCreatorBase):
     """
-    The ColorEditorCreator implements a QItemEditorCreatorBase that creates a ColorLineEdit.
+    The ItemEditorCreator implements a QStandardItemEditorCreator that creates an editor widget from a provided editor widget type.
     """
-    def __init__(self):
+    def __init__(self, widgetType):
         """
         Constructor
+        @param widgetType The type to instantiate in the createWidet method.
         """
-        super(ColorEditorCreator, self).__init__()
+        super(ItemEditorCreator, self).__init__()
+        self._widgetType = widgetType
 
     def createWidget(self, parent):
         """
-        Overrides the QtGui.QItemEditorCreatorBase createWidget method to create the ColorLineEditor..
+        Overrides the QtGui.QItemEditorCreatorBase createWidget method to create the editor widget instance.
 
-        @param parent The object to uses as the parent of the ColorLineEditor.
-        @return An instance of the ColorEditor
+        @param parent The object to use as the parent of the editor widget.
+        @return An instance of the editor widget with the given parent.
         """
-        editor = ColorEditor(parent)
-        editor.setFrame(False)
-        return editor
+        return self._widgetType(parent)
+
+    def valuePropertyName(self):
+        """
+        Overrides the QtGui.QItemEditorCreatorBase valuePropertyName method to return the Editor's QProperty.
+        
+        @return The name of the property used to get and set values in the creator's editor widgets.
+        """
+        return self._widgetType.staticMetaObject.userProperty().name()
 
 class ItemEditorFactory(QtGui.QItemEditorFactory):
     """
     The ItemEditorFactory implements a ItemEditorFactory registered with all editors created in the kousen.ui.editorfactory module.
     """
     # Define a table of types and respective editor to register with this instance
-    typeEditors = { QtGui.QColor : ColorEditorCreator }
+    typeEditors = { QtGui.QColor : ColorEditor }
 
     def __init__(self):
         """
         Constructor
         """
         super(ItemEditorFactory, self).__init__()
+        # Register the ItemEditorCreator or the widget with an ItemEditorCreator
         for k,v in ItemEditorFactory.typeEditors.items():
-            self.registerEditor(k, v())
+            if issubclass(v, QtGui.QItemEditorCreatorBase):
+                self.registerEditor(k, v())
+            else:
+                self.registerEditor(k, ItemEditorCreator(v))
 
 class ItemEditorFactoryDelegate(QtGui.QStyledItemDelegate):
     """
