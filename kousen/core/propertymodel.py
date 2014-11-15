@@ -3,9 +3,9 @@ from PySide import QtGui, QtCore
 
 from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
 
-class PropertyItem(AbstractDataTreeItem):
+class AbstractPropertyItem(AbstractDataTreeItem):
     """
-    The Property Item represents a single Python property objects of an object.
+    The Abstract Property Item represents a base layer of functionality in the Property Model.
     """
 
     class Fields(AbstractDataFields):
@@ -14,6 +14,77 @@ class PropertyItem(AbstractDataTreeItem):
         """
         NAME  = 0
         VALUE = 1
+
+    def __init__(self, sdata, parent=None):
+        """
+        Constructor.
+
+        @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
+        @param parent  The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
+        """
+        super(AbstractPropertyItem, self).__init__(sdata, parent)
+        
+        # We key property items by a (class type, property name) dictionary
+        self._childrenPropertyTable = {}
+
+    def size(self):
+        """
+        Calculates the data item size (i.e. columns) of this item.
+
+        @returns The size of the field list.
+        """
+        return self.Fields.size()
+
+    def getPropertyItem(self, class_name, property_name):
+        """
+        Returns the PropertyItem associated with the class name, property name pair
+
+        @param class_name    The primary key used to store property items.
+        @param property_name The secondary key used to store property items.
+        @returns             The PropertyItem is available; None otherwise.
+        """
+        classdict = self._childrenPropertyTable.get(class_name, {})
+        return classdict.get(property_name, None)
+
+    def getPropertyItems(self, class_name):
+        """
+        Returns all PropertyItems associated with the class name.
+
+        @param class_name    The primary key used to store property items.
+        @returns             A list of applicable PropertyItems
+        """
+        subdict = self._childrenPropertyTable.get(class_name, {})
+        return [(k, subdict[k]) for k in subdict.keys()]
+
+    def insertPropertyItem(self, class_name, property_name, item):
+        """
+        Inserts a PropertyItem and associates it with a class name, property name pair.
+
+        @param class_name    The primary key used to store property items.
+        @param property_name The secondary key used to store property items.
+        @param item          The PropertyItem instance.
+        @returns             The PropertyItem is available; None otherwise.
+        """
+        subdict = self._childrenPropertyTable.setdefault(class_name, {})
+        subdict[property_name] = item
+
+    def removePropertyItem(self, class_name, property_name):
+        """
+        Removes a PropertyItem associated with a class name, property name pair.
+
+        @param class_name    The primary key used to store property items.
+        @param property_name The secondary key used to store property items.
+        """
+        subdict = self._childrenPropertyTable.get(class_name, None)
+        if subdict:
+            subdict.pop(property_name, None)
+            if not subdict:
+                self._childrenPropertyTable.pop(class_name, None)
+
+class PropertyItem(AbstractPropertyItem):
+    """
+    The Property Item represents a single Python property objects of an object.
+    """
 
     # Define a table of roles and respective types that return the property value
     roleValues = { QtCore.Qt.DecorationRole : [QtGui.QColor] }
@@ -78,14 +149,6 @@ class PropertyItem(AbstractDataTreeItem):
         """
         return not bool(self._components)
 
-    def size(self):
-        """
-        Calculates the data item size (i.e. columns) of this item.
-
-        @returns The size of the field list.
-        """
-        return self.Fields.size()
-
     def data(self, id, role=QtCore.Qt.DisplayRole):
         """
         Gets the data for the corresponding id, filtered by the given role.
@@ -120,17 +183,10 @@ class PropertyItem(AbstractDataTreeItem):
 
         return super(PropertyItem, self).setData(id, role)
 
-class PropertyRoot(AbstractDataTreeItem):
+class PropertyRoot(AbstractPropertyItem):
     """
     The Property Root represents an invisible root item in the Property Model.
     """
-
-    class Fields(AbstractDataFields):
-        """
-        The Fields class provides an enumeration of the various fields within a PropertyRoot.
-        """
-        NAME  = 0
-        VALUE = 1
 
     def __init__(self, sdata=[], parent=None):
         """
@@ -140,14 +196,6 @@ class PropertyRoot(AbstractDataTreeItem):
         @param parent  The initial parent AbstractDataTreeItem of this PropertyItem
         """
         super(PropertyRoot, self).__init__(sdata, parent)
-
-    def size(self):
-        """
-        Calculates the data item size (i.e. columns) of this item.
-
-        @returns The size of the field list.
-        """
-        return self.Fields.size()
 
 class PropertyModel(AbstractDataTreeModel):
     """
@@ -161,9 +209,6 @@ class PropertyModel(AbstractDataTreeModel):
         @param parent     The initial parent PropertyModel of this AbstractDataTreeItem
         """
         super(PropertyModel, self).__init__(headerdata, parent)
-
-        # We key property items by a (class type, property name) dictionary
-        self._propertyTable = {}
 
     def createRoot(self, *args):
         """
@@ -183,14 +228,14 @@ class PropertyModel(AbstractDataTreeModel):
         """
         return PropertyItem(*args)
 
-    def insertProperties(self, objects):
+    def insertProperties(self, objects, parent=QtCore.QModelIndex()):
         """
         Inserts a list of Python property objects derived from a list of objects.
 
         @param objects A list of objects to examine for Python property objects.
         """
         import inspect
-
+        parentItem = self.item(parent)
         for object in objects:
             # Property obects exist at the class defintion; get the members of the object
             # and match them up with the class defition.
@@ -201,28 +246,30 @@ class PropertyModel(AbstractDataTreeModel):
                 # Create (or get) the class-propertyname lookup table entry and add the
                 # object to the proprty item's object list (to handle multiple instance
                 # of the same class).
-                classdict = self._propertyTable.setdefault(object.__class__, {})
-                pitem = classdict.get(name, None)
+                pitem = parentItem.getPropertyItem(object.__class__, name)
                 if not pitem:
-                    pitem = self.createItem(name, pobject, self._root)
-                    self._propertyTable[object.__class__][name] = pitem
-                    self.appendItem(pitem)
+                    pitem = self.createItem(name, pobject, parentItem)
+                    self.appendItem(pitem, parent)
+                    parentItem.insertPropertyItem(object.__class__, name, pitem)
                 pitem.insertComponent(object)
+                
+                # Insert any child properties
+                self.insertProperties([pobject.fget(object)], self.itemIndex(pitem))
 
-    def removeProperties(self, objects):
+    def removeProperties(self, objects, parent=QtCore.QModelIndex()):
         """
         Removes all respective Python property objects derived from an list of objects.
 
         @param objects A list of objects to examine for Python property objects.
         """
+        parentItem = self.item(parent)
+
         for object in objects:
             # Get the entire class lookup table entry for the class and remove the object
             # and if it is the last object in multiple selection remove the model data.
-            classdict = self._propertyTable.get(object.__class__, {})
-            for name, pitem in [(k, classdict[k]) for k in list(classdict.keys())]:
+            items = list(parentItem.getPropertyItems(object.__class__))
+            for name, pitem in items:
                 pitem.removeComponent(object)
                 if pitem.isEmpty():
-                    self.removeItem(pitem)
-                    del classdict[name]
-            if not classdict:
-                self._propertyTable.pop(object.__class__, None)
+                    self.removeItem(pitem, parent)
+                    parentItem.removePropertyItem(object.__class__, name)
