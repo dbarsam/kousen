@@ -300,7 +300,7 @@ class AbstractDataItem(QtCore.QObject):
         @param role The filter key of the lookup operation.
         @returns True if data exists; False otherwise.
         """
-        return self._staticdata[role, id] == None
+        return self._staticdata[role, id] != None
 
     def flags(self, id):
         """
