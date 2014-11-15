@@ -47,7 +47,7 @@ class Point3D(object):
         """
         The len operator.
 
-        @returns      The number of items in the internal data.
+        @returns The number of items in the internal data.
         """
         return len(self._data)
 
@@ -67,6 +67,14 @@ class Point3D(object):
         Return an iterator object.
         """
         return iter(self._data)
+
+    def __hash__(self):
+        """
+        Calculates the hash value of the instance.
+
+        @returns A hash value calcaulted from internal data.
+        """
+        return hash(tuple(self._data))
 
     def __repr__(self):
         """

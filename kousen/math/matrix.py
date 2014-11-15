@@ -48,6 +48,13 @@ class Matrix4x4(object):
         """
         return iter(self._data)
 
+    def __hash__(self):
+        """
+        Calculates the hash value of the instance.
+
+        @returns A hash value calcaulted from internal data.
+        """
+        return hash(tuple(self._data))
 
     def __setitem__(self, index, value):
         """
@@ -162,7 +169,7 @@ class Matrix4x4(object):
         M[ 2] = 0.0;         M[ 6] = 0.0;         M[10] = scaleFactor; M[14] = 0.0;
         M[ 3] = 0.0;         M[ 7] = 0.0;         M[11] = 0.0;         M[15] = 1.0;
 
-        if originaPoint:
+        if originPoint:
             v = originPoint.toVector3D()
             return Matrix4x4.translation(v) * M * Matrix4x4.translation(-v)
         return M

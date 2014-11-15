@@ -52,6 +52,11 @@ class Vector3D(object):
         return self._data
 
     def __len__(self):
+        """
+        The len operator.
+
+        @returns The number of items in the internal data.
+        """
         return len(self._data)
 
     def __getitem__(self, index):
@@ -70,6 +75,14 @@ class Vector3D(object):
         Return an iterator object.
         """
         return iter(self._data)
+
+    def __hash__(self):
+        """
+        Calculates the hash value of the instance.
+
+        @returns A hash value calcaulted from internal data.
+        """
+        return hash(tuple(self._data))
 
     def __repr__(self):
         """
