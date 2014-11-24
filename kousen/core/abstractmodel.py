@@ -235,6 +235,24 @@ class AbstractDataItem(QtCore.QObject):
         """
         return self.setData(id, item)
 
+    def _dataChanging(self, index, role):
+        """
+        Internal method to emit the dataChanging signal.
+
+        @param index The index of the data.
+        @param role  The data role of the data.
+        """
+        self.dataChanging.emit(index, role)
+
+    def _dataChanged(self, index, role):
+        """
+        Internal method to emit the dataChanged signal.
+
+        @param index The index of the data.
+        @param role  The data role of the data.
+        """
+        self.dataChanged.emit(index, role)
+
     def row(self):
         """
         Returns the row component of the QModelIndex of this item within the parent's child collection
@@ -286,9 +304,9 @@ class AbstractDataItem(QtCore.QObject):
         @param role The filter key of the data storing operation.
         @returns True is operation was succesful; False otherwise.
         """
-        self.dataChanging.emit(id, role)
+        self._dataChanging(id, role)
         self._staticdata[role, id] = value
-        self.dataChanged.emit(id, role)
+        self._dataChanged(id, role)
 
         return True
 
@@ -355,6 +373,22 @@ class AbstractDataTreeItem(AbstractDataItem):
         super(AbstractDataTreeItem, self).__init__(sdata, parent)
         self._children = []
 
+    def _childAdded(self, item):
+        """
+        Internal method to emit the childAdded signal.
+
+        @parem item The item that has been added as a 'child'
+        """
+        self.childAdded.emit(item)
+
+    def _childRemoved(self, item):
+        """
+        Internal method to emit the childRemoved signal.
+
+        @parem item The item that has been removed as a 'child'
+        """
+        self.childRemoved.emit(item)
+
     def isRoot(self):
         """
         Queries the node if it is a root node.
@@ -389,7 +423,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @param item the item to append.
         """
         self._children.append(item)
-        self.childAdded.emit(item)
+        self._childAdded(item)
 
     def insertChild(self, position, item):
         """
@@ -399,7 +433,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @param position the position to insert the item.
         """
         self._children.insert(position, item)
-        self.childAdded.emit(item)
+        self._childAdded(item)
 
     def removeChild(self, item):
         """
@@ -416,7 +450,7 @@ class AbstractDataTreeItem(AbstractDataItem):
         @param position The position to remove.
         """
         child = self._children.pop(position)
-        self.childRemoved.emit(child)
+        self._childRemoved(child)
         return child
 
     def child(self, position):
@@ -507,6 +541,24 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         self._items = []
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
+    def _dataChanging(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanging signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        #self.dataChanging.emit(topLeft, bottomRight or topLeft)
+
+    def _dataChanged(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanged signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        self.dataChanged.emit(topLeft, bottomRight or topLeft)
+
     def _itemInsert(self, item):
         """
         Internal item insert.
@@ -574,7 +626,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        # TODO: handle this?
+        self._dataChanging(index)
 
     def _itemChanged(self, id, role):
         """
@@ -582,7 +634,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        self.dataChanged.emit(index, index)
+        self._dataChanged(index)
 
     def createItem(self, *args):
         """
@@ -809,13 +861,32 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         self._root  = self.createRoot(headerData)
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
+    def _dataChanging(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanging signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        #self.dataChanging.emit(topLeft, bottomRight or topLeft)
+        pass
+
+    def _dataChanged(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanged signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        self.dataChanged.emit(topLeft, bottomRight or topLeft)
+
     def _itemChanging(self, id, role):
         """
         Internal item changed event handler.
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        # TODO: handle this?
+        self._dataChanging(index)
 
     def _itemChanged(self, id, role):
         """
@@ -823,7 +894,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        self.dataChanged.emit(index, index)
+        self._dataChanged(index)
 
     def _itemInsert(self, parent, item):
         """
@@ -1170,6 +1241,24 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         self._items = []
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
 
+    def _dataChanging(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanging signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        #self.dataChanging.emit(topLeft, bottomRight or topLeft)
+
+    def _dataChanged(self, topLeft, bottomRight=None):
+        """
+        Internal method to emit the dataChanged signal.
+
+        @param topLeft     The top and left most QtCore.QModelIndex of the data.
+        @param bottomRight The bottom and right most QtCore.QModelIndex of the data.
+        """
+        self.dataChanged.emit(topLeft, bottomRight or topLeft)
+
     def _itemInsert(self, item):
         """
         Internal item insert.
@@ -1237,7 +1326,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        # TODO: handle this?
+        self._dataChanging(index)
 
     def _itemChanged(self, id, role):
         """
@@ -1245,7 +1334,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         item = self.sender()
         index = self.createIndex(item.row(), id, item)
-        self.dataChanged.emit(index, index)
+        self._dataChanged(index)
 
     def createItem(self, *args):
         """
