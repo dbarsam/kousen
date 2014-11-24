@@ -5,7 +5,6 @@ from PySide import QtGui, QtCore
 from kousen.math import Point3D
 from kousen.core.propertymodel import PropertyItem, PropertyModel
 from kousen.core.proxymodel import ColumnFilterProxyModel, UndoRedoProxyModel, TreeColumnFilterProxyModel
-from kousen.scenegraph import SceneGraphItem
 from kousen.gl.glscene import GLSceneNode, GLSceneModel
 from kousen.gl.glcamera import *
 from kousen.gl.glhud import *
@@ -28,6 +27,7 @@ class MainWindow(__form_class__, __base_class__):
         Constructor.
         """
         super(MainWindow, self).__init__(parent)
+        self._sceneGraph = None
         self.setupUi(self)
 
     def setupUi(self, widget):
@@ -77,12 +77,18 @@ class MainWindow(__form_class__, __base_class__):
         self.actionNewScene.trigger()
         self._nodeInsert([ColorCubeObject()])
 
+    def _dataChanged(self, topLeft, bottomRight):
+        pass
+
     def _sceneNew(self):
         """
         Creates a new scene.
         """
         # Scene Graph Model
-        self._sceneGraph = GLSceneModel(SceneGraphItem.Fields.headerdata(), self)
+        if self._sceneGraph:
+            self._sceneGraph.dataChanged.disconnect(self._dataChanged)
+        self._sceneGraph = GLSceneModel(self)
+        self._sceneGraph.dataChanged.connect(self._dataChanged)
 
         # Scene Graph Explorer's Scene Graph Model Views
         self.sceneExplorer.clear()
