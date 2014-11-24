@@ -3,7 +3,6 @@ import os
 from PySide import QtGui, QtCore
 from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel, ColumnFilterDataProxyModel
 from kousen.core.abstractmodel import AbstractDataItem, AbstractData, AbstractDataListModel
-from kousen.scenegraph import SceneGraphItem
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
 from kousen.ui.uiloader import UiLoader
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
