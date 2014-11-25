@@ -9,6 +9,7 @@ class Matrix4x4(object):
 
     @warning The Matrix4x4 is Column Major.
     """
+
     def __init__(self):
         """
         Constructor.
@@ -21,7 +22,7 @@ class Matrix4x4(object):
 
         @returns A string representation of the Matrix4x4
         """
-        return "{0}{1}".format(Matrix4x4.__name__, self._data)
+        return "{0}{1}".format(self.__class__.__name__, self._data)
 
     def __str__(self):
         """
@@ -87,35 +88,35 @@ class Matrix4x4(object):
 
         return None
 
-    @staticmethod
-    def identity():
+    @classmethod
+    def identity(cls):
         """
         Creates an Identity Matrix.
         """
-        M = Matrix4x4()
+        M = cls()
         M[ 0] = 1.0;   M[ 4] = 0.0;   M[ 8] = 0.0;   M[12] = 0.0;
         M[ 1] = 0.0;   M[ 5] = 1.0;   M[ 9] = 0.0;   M[13] = 0.0;
         M[ 2] = 0.0;   M[ 6] = 0.0;   M[10] = 1.0;   M[14] = 0.0;
         M[ 3] = 0.0;   M[ 7] = 0.0;   M[11] = 0.0;   M[15] = 1.0;
         return M
 
-    @staticmethod
-    def translation( vector3D ):
+    @classmethod
+    def translation( cls, vector3D ):
         """
         Creates a Translation Matrix from a Translation Vector3D.
 
         @param vector3D The translation Vector3D.
         @returns A Matrix4x4 Translation Matrix
         """
-        M = Matrix4x4()
+        M = cls()
         M[ 0] = 1.0;   M[ 4] = 0.0;   M[ 8] = 0.0;   M[12] = vector3D.x;
         M[ 1] = 0.0;   M[ 5] = 1.0;   M[ 9] = 0.0;   M[13] = vector3D.y;
         M[ 2] = 0.0;   M[ 6] = 0.0;   M[10] = 1.0;   M[14] = vector3D.z;
         M[ 3] = 0.0;   M[ 7] = 0.0;   M[11] = 0.0;   M[15] = 1.0;
         return M
 
-    @staticmethod
-    def rotation( angleInRadians, axisVector, originPoint = None ):
+    @classmethod
+    def rotation( cls, angleInRadians, axisVector, originPoint = None ):
         """
         Creates a Axis-Angle Rotation Matrix from an Angle and Axis Vector.
 
@@ -132,7 +133,7 @@ class Matrix4x4(object):
         ys = axisVector.y * s
         zs = axisVector.z * s
 
-        M = Matrix4x4()
+        M = cls()
         M[ 0] = c + one_minus_c * axisVector.x*axisVector.x
         M[ 5] = c + one_minus_c * axisVector.y*axisVector.y
         M[10] = c + one_minus_c * axisVector.z*axisVector.z
@@ -151,11 +152,11 @@ class Matrix4x4(object):
 
         if originPoint:
             v = originPoint.toVector3D()
-            return Matrix4x4.translation(v) * M * Matrix4x4.translation(-v)
+            return cls.translation(v) * M * cls.translation(-v)
         return M
 
-    @staticmethod
-    def scale(scaleFactor, originPoint = None):
+    @classmethod
+    def scale(cls, scaleFactor, originPoint = None):
         """
         Creates a Uniform Scale Matrix from an scalar factor.
 
@@ -163,7 +164,7 @@ class Matrix4x4(object):
         @param originPoint    The origin point of the scale; if None assume the origin (0,0,0).
         @returns A Matrix4x4 Rotation Matrix
         """
-        M = Matrix4x4()
+        M = cls()
         M[ 0] = scaleFactor; M[ 4] = 0.0;         M[ 8] = 0.0;         M[12] = 0.0;
         M[ 1] = 0.0;         M[ 5] = scaleFactor; M[ 9] = 0.0;         M[13] = 0.0;
         M[ 2] = 0.0;         M[ 6] = 0.0;         M[10] = scaleFactor; M[14] = 0.0;
@@ -171,11 +172,11 @@ class Matrix4x4(object):
 
         if originPoint:
             v = originPoint.toVector3D()
-            return Matrix4x4.translation(v) * M * Matrix4x4.translation(-v)
+            return cls.translation(v) * M * cls.translation(-v)
         return M
 
-    @staticmethod
-    def lookAt( eyePoint, targetPoint, upVector, isInverted ):
+    @classmethod
+    def lookAt( cls, eyePoint, targetPoint, upVector, isInverted ):
         """
         Creates a 'LookAt' Matrix.
 
@@ -202,7 +203,7 @@ class Matrix4x4(object):
         x = x.normalized()
         y = y.normalized()
 
-        M = Matrix4x4()
+        M = cls()
 
         if isInverted :
             # the rotation matrix
@@ -212,7 +213,7 @@ class Matrix4x4(object):
             M[ 3] = 0.0;   M[ 7] = 0.0;   M[11] = 0.0;   M[15] = 1.0;
 
             # step two: premultiply by a translation matrix
-            return Matrix4x4.translation( eyePoint.toVector3D() ) * M
+            return cls.translation( eyePoint.toVector3D() ) * M
 
         # the rotation matrix
         M[ 0] = x.x;   M[ 4] = x.y;   M[ 8] = x.z;   M[12] = 0.0;
@@ -221,7 +222,7 @@ class Matrix4x4(object):
         M[ 3] = 0.0;   M[ 7] = 0.0;   M[11] = 0.0;   M[15] = 1.0;
 
         # step two: postmultiply by a translation matrix
-        return M * Matrix4x4.translation( - eyePoint.toVector3D() )
+        return M * cls.translation( - eyePoint.toVector3D() )
 
     def data(self):
         """
@@ -237,7 +238,7 @@ class Matrix4x4(object):
 
         @returns Another Matrix4x4 with the same values as self
         """
-        M = Matrix4x4()
+        M = self.__class__()
         M._data = list(self._data)
         return M
 
@@ -261,7 +262,7 @@ class Matrix4x4(object):
         a = self
         b = other
 
-        M = Matrix4x4()
+        M = self.__class__()
         M[ 0] = a[ 0] * b[ 0]  +  a[ 4] * b[ 1]  +  a[ 8] * b[ 2]  +  a[12] * b[ 3]
         M[ 1] = a[ 1] * b[ 0]  +  a[ 5] * b[ 1]  +  a[ 9] * b[ 2]  +  a[13] * b[ 3]
         M[ 2] = a[ 2] * b[ 0]  +  a[ 6] * b[ 1]  +  a[10] * b[ 2]  +  a[14] * b[ 3]
