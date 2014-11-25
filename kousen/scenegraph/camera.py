@@ -3,7 +3,6 @@ import math
 from PySide import QtGui, QtCore
 from OpenGL import GL
 from kousen.scenegraph import SceneGraphItem
-from kousen.gl.glscene import GLNode
 from kousen.math import Point3D, Vector3D, Matrix4x4
 from kousen.math.conic import coniclength, conicwidth
 
