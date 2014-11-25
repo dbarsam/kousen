@@ -16,33 +16,6 @@ class Point3D(object):
         super(Point3D, self).__init__()
         self._data = [x,y,z]
 
-    @property
-    def x(self):
-        """
-        Convenience property for the 'x' value
-
-        @returns The value stored for the 'x' component
-        """
-        return self._data[0]
-
-    @property
-    def y(self):
-        """
-        Convenience property for the 'y' value
-
-        @returns The value stored for the 'y' component
-        """
-        return self._data[1]
-
-    @property
-    def z(self):
-        """
-        Convenience property for the 'z' value
-
-        @returns The value stored for the 'z' component
-        """
-        return self._data[2]
-
     def __len__(self):
         """
         The len operator.
@@ -51,16 +24,27 @@ class Point3D(object):
         """
         return len(self._data)
 
-    def __getitem__(self, index):
+    def __getitem__(self, key):
         """
         The [] operator getter.
 
-        @param index The lookup index to the internal data.
+        @param key The lookup index to the internal data.
         @returns      The data if the lookup operation was succesful; None otherwise.
         """
-        if index >= len(self._data):
+        if key >= len(self._data):
             raise IndexError()
-        return self._data[index]
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        """
+        The [] operator setter.
+
+        @param key The lookup index to the internal data.
+        @param value The lookup index to the internal data.
+        """
+        if key >= len(self._data):
+            raise IndexError()
+        self._data[key] = value
 
     def __iter__(self):
         """
@@ -130,6 +114,60 @@ class Point3D(object):
         @returns       True if the components not are equal; false otherwise
         """
         return not self == other
+
+    @property
+    def x(self):
+        """
+        Convenience property for the 'x' value
+
+        @returns The value stored for the 'x' component
+        """
+        return self[0]
+
+    @x.setter
+    def x(self, value):
+        """
+        Convenience property for the 'x' value
+
+        @param The value to store in the 'x' component
+        """
+        self[0] = value
+
+    @property
+    def y(self):
+        """
+        Convenience property for the 'y' value
+
+        @returns The value stored for the 'y' component
+        """
+        return self[1]
+
+    @y.setter
+    def y(self, value):
+        """
+        Convenience property for the 'y' value
+
+        @param The value to store in the 'y' component
+        """
+        self[1] = value
+
+    @property
+    def z(self):
+        """
+        Convenience property for the 'z' value
+
+        @returns The value stored for the 'z' component
+        """
+        return self[2]
+
+    @z.setter
+    def z(self, value):
+        """
+        Convenience property for the 'z' value
+
+        @param The value to store in the 'z' component
+        """
+        self[2] = value
 
     def data(self):
         """

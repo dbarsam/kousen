@@ -32,16 +32,27 @@ class Matrix4x4(object):
         """
         return "{0[0]:5}, {0[4]:5}, {0[8]:5}, {0[12]:5}\n{0[1]:5}, {0[5]:5}, {0[9]:5}, {0[13]:5}\n{0[2]:5}, {0[6]:5}, {0[10]:5}, {0[14]:5}\n{0[3]:5}, {0[7]:5}, {0[11]:5}, {0[15]:5}".format(self._data)
 
-    def __getitem__(self, index):
+    def __getitem__(self, key):
         """
         The [] operator getter.
 
-        @param index The lookup index to the internal data.
+        @param key The lookup index to the internal data.
         @returns      The data if the lookup operation was succesful; None otherwise.
         """
-        if index >= len(self._data):
+        if key >= len(self._data):
             raise IndexError()
-        return self._data[index]
+        return self._data[key]
+
+    def __setitem__(self, key, value):
+        """
+        The [] operator setter.
+
+        @param key The lookup index to the internal data.
+        @param value The lookup index to the internal data.
+        """
+        if key >= len(self._data):
+            raise IndexError()
+        self._data[key] = value
 
     def __iter__(self):
         """
