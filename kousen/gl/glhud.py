@@ -39,7 +39,7 @@ class GLCameraHUDNode(GLNode, CameraHUDNode):
                     m[12] = 0.0
                     m[13] = 0.0
                     m[14] = 0.0
-                    GL.glMultMatrixf(m.data);
+                    GL.glMultMatrixf(m.data());
                     self._gnomon.paintGL()
 
         GL.glViewport(0,0,self._right, self._bottom);

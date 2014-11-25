@@ -24,7 +24,7 @@ class GLTransformationNode(GLNode):
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
         GL.glPushMatrix()
-        GL.glMultMatrixf(self._matrix.data)
+        GL.glMultMatrixf(self._matrix.data())
 
         super(GLTransformationNode, self).paintGL()
 

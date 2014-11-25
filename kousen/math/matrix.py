@@ -88,7 +88,7 @@ class Matrix4x4(object):
         return None
 
     @staticmethod
-    def identity(self):
+    def identity():
         """
         Creates an Identity Matrix.
         """
@@ -223,10 +223,9 @@ class Matrix4x4(object):
         # step two: postmultiply by a translation matrix
         return M * Matrix4x4.translation( - eyePoint.toVector3D() )
 
-    @property
     def data(self):
         """
-        Convenience property to access the raw data
+        Accessor method to access the raw data
 
         @returns The list of values
         """

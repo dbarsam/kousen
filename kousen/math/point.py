@@ -131,10 +131,9 @@ class Point3D(object):
         """
         return not self == other
 
-    @property
     def data(self):
         """
-        Convenience property to access the raw data
+        Accessor method to access the raw data
 
         @returns The list of values
         """

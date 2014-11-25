@@ -42,10 +42,9 @@ class Vector3D(object):
         """
         return self._data[2]
 
-    @property
     def data(self):
         """
-        Convenience property to access the raw data
+        Accessor method to access the raw data
 
         @returns The list of values
         """

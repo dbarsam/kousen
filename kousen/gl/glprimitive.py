@@ -172,7 +172,7 @@ class QuadricArrow(GLPrimitiveNode):
         super(QuadricArrow, self).paintGL()
 
         with GLMatrixScope():
-            GL.glMultMatrixf(self._transformation.data)
+            GL.glMultMatrixf(self._transformation.data())
 
             #Arrow Shaft
             quadric = GLU.gluNewQuadric()
@@ -334,9 +334,9 @@ class QuadricGnomon(GLPrimitiveNode):
                     # Axes labels
                     GL.glDisable(GL.GL_DEPTH_TEST)
                     GL.glColor(1, 1, 1)
-                    GL.glRasterPos3fv(self._x.data)
+                    GL.glRasterPos3fv(self._x.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('X'))
-                    GL.glRasterPos3fv(self._y.data)
+                    GL.glRasterPos3fv(self._y.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Y'))
-                    GL.glRasterPos3fv(self._z.data)
+                    GL.glRasterPos3fv(self._z.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Z'))
