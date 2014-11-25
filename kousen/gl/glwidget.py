@@ -36,8 +36,15 @@ class GLWidget(QtOpenGL.QGLWidget):
         #cursor_pixmap.setMask(cursor_pixmap.mask())
         #self._cursor_roll = QtGui.QCursor(cursor_pixmap.scaledToHeight(32))
 
+    def _modelDataChanged(self, topLeft, bottomRight):
+        self.update()
+
     def setModel(self, model):
+        if self._model:
+            self._model.dataChanged.disconnect(self._modelDataChanged)
         self._model = model
+        self._model.dataChanged.connect(self._modelDataChanged)
+
         self.initializeGL()
         self.resizeGL(self.width(), self.height())
 
