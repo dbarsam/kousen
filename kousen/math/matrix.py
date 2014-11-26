@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
 import math
+import PySide.QtCore
 from kousen.math.point import Point3D
 from kousen.math.vector import Vector3D
 
-class Matrix4x4(object):
+class Matrix4x4(PySide.QtCore.QObject):
     """
     Matrix4x4 provides a simplified but self contained 4x4 Matrix class.
 
     @warning The Matrix4x4 is Column Major.
     """
+    dataChanging = PySide.QtCore.Signal(object)
+    dataChanged  = PySide.QtCore.Signal(object)
 
     def __init__(self):
         """
         Constructor.
         """
+        super(Matrix4x4, self).__init__()
         self.init()
 
     def __repr__(self):
@@ -52,7 +56,9 @@ class Matrix4x4(object):
         """
         if key >= len(self._data):
             raise IndexError()
+        self._dataChanging(key)
         self._data[key] = value
+        self._dataChanged(key)
 
     def __iter__(self):
         """
@@ -234,6 +240,18 @@ class Matrix4x4(object):
 
         # step two: postmultiply by a translation matrix
         return M * cls.translation( - eyePoint.toVector3D() )
+
+    def _dataChanging(self, index):
+        """
+        Internal method to emit the DataChanging signal.
+        """
+        self.dataChanging.emit(index)
+
+    def _dataChanged(self, index):
+        """
+        Internal method to emit the DataChanged signal.
+        """
+        self.dataChanged.emit(index)
 
     def data(self):
         """

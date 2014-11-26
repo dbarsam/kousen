@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 import math
+import PySide.QtCore
 
-class Point3D(object):
+class Point3D(PySide.QtCore.QObject):
     """
     Point3D provides a simplified but self contained 3D Point class.
     """
+    dataChanging = PySide.QtCore.Signal(object)
+    dataChanged  = PySide.QtCore.Signal(object)
+
     def __init__(self,x=0,y=0,z=0):
         """
         Constructor.
@@ -44,7 +48,9 @@ class Point3D(object):
         """
         if key >= len(self._data):
             raise IndexError()
+        self._dataChanging(key)
         self._data[key] = value
+        self._dataChanged(key)
 
     def __iter__(self):
         """
@@ -114,6 +120,18 @@ class Point3D(object):
         @returns       True if the components not are equal; false otherwise
         """
         return not self == other
+
+    def _dataChanging(self, index):
+        """
+        Internal method to emit the DataChanging signal.
+        """
+        self.dataChanging.emit(index)
+
+    def _dataChanged(self, index):
+        """
+        Internal method to emit the DataChanged signal.
+        """
+        self.dataChanged.emit(index)
 
     @property
     def x(self):

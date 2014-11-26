@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 import math
+import PySide.QtCore
 
-class Vector3D(object):
+class Vector3D(PySide.QtCore.QObject):
     """
     Vector3D provides a simplified but self contained 3D Vector class.
     """
-    def __init__(self, x=0, y=0, z=0):
+    dataChanging = PySide.QtCore.Signal(object)
+    dataChanged  = PySide.QtCore.Signal(object)
+
+    def __init__(self, x=0, y=0, z=0):        
         """
         Constructor.
 
@@ -13,6 +17,7 @@ class Vector3D(object):
         @param y The y component value.
         @param z The z component value.
         """
+        super(Vector3D, self).__init__()
         self._data = [x,y,z]
 
     def __len__(self):
@@ -43,7 +48,9 @@ class Vector3D(object):
         """
         if key >= len(self._data):
             raise IndexError()
+        self._dataChanging(key)
         self._data[key] = value
+        self._dataChanged(key)
 
     def __iter__(self):
         """
@@ -163,6 +170,18 @@ class Vector3D(object):
         @returns       True if the components not are equal; false otherwise
         """
         return not (self==other)
+
+    def _dataChanging(self, index):
+        """
+        Internal method to emit the DataChanging signal.
+        """
+        self.dataChanging.emit(index)
+
+    def _dataChanged(self, index):
+        """
+        Internal method to emit the DataChanged signal.
+        """
+        self.dataChanged.emit(index)
 
     @property
     def x(self):
