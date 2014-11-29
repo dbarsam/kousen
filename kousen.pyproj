@@ -22,6 +22,8 @@
     <Compile Include="kousen\core\exception.py" />
     <Compile Include="kousen\core\propertymodel.py" />
     <Compile Include="kousen\core\proxymodel.py" />
+    <Compile Include="kousen\scenegraph\object.py" />
+    <Compile Include="kousen\scenegraph\viewport.py" />
     <Compile Include="kousen\ui\editorfactory.py" />
     <Compile Include="kousen\ui\lineedit.py" />
     <Compile Include="kousen\ui\views.py" />

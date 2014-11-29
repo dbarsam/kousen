@@ -27,12 +27,12 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         Constructor.
 
         @param name     The label of this object node.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(GLPrimitiveNode, self).__init__(name, parent)
 
         # Initial color of the object.
-        self._color = QtGui.QColor(0, 255, 0)
+        self.__color = QtGui.QColor(0, 255, 0)
         self._selected = False
 
     @property
@@ -62,7 +62,7 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
         """
         if self._selected:
             return self.__primitive_selectioncolor__
-        return self._color
+        return self.__color
 
     @color.setter
     def color(self, value):
@@ -71,7 +71,27 @@ class GLPrimitiveNode(GLNode, PrimitiveNode):
 
         @param value A QtGui.QColor instance.
         """
-        self._color = value
+        self.__color = value
+
+    def _prepaintGL(self):
+        """
+        Internal OpenGL Render operation.  Execute any logic required before the Draw callback.
+        """
+        super(GLPrimitiveNode, self)._prepaintGL()
+
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        GL.glPushMatrix();
+
+        GL.glMultMatrixf(self.matrix().data())
+
+    def _postpaintGL(self):
+        """
+        Internal OpenGL Render operation.  Execute any logic required after the Draw callback.
+        """
+        GL.glMatrixMode(GL.GL_MODELVIEW)
+        GL.glPopMatrix();
+
+        super(GLPrimitiveNode, self)._postpaintGL()
 
 class GridObject(GLPrimitiveNode):
 
@@ -84,25 +104,25 @@ class GridObject(GLPrimitiveNode):
 
         @param count    The number of lines in the grid.
         @param space    The spaceing between lines.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(GridObject, self).__init__(self.__description__, parent)
-        self._spacing = space
-        self._count = count
+        self.__spacing = space
+        self.__count = count
 
-    def paintGL(self):
+    def _paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
-        super(GridObject, self).paintGL()
+        super(GridObject, self)._paintGL()
 
         with GLAttribScope(GL.GL_ENABLE_BIT | GL.GL_LIGHTING_BIT | GL.GL_LINE_BIT | GL.GL_CURRENT_BIT):
             with GLMatrixScope(GL.GL_MODELVIEW, False):
                 GL.glEnable( GL.GL_COLOR_MATERIAL )
                 GL.glDisable( GL.GL_LIGHTING )
                 with GLScope( GL.GL_LINES ):
-                    s = self._spacing
-                    c = self._count/2*self._spacing
+                    s = self.__spacing
+                    c = self.__count/2*self.__spacing
                     i = -c
                     while i <= c:
                         GL.glColor(0.5, 0.5, 0.5)
@@ -110,7 +130,7 @@ class GridObject(GLPrimitiveNode):
                         GL.glVertex3f(  i, 0.0,   c)
                         GL.glVertex3f(  c, 0.0,   i);
                         GL.glVertex3f( -c, 0.0,   i);
-                        i += self._spacing
+                        i += self.__spacing
                     GL.glColor(0.0, 0.0, 0.0)
                     GL.glVertex3f(0.0, 0.0,   -c);
                     GL.glVertex3f(0.0, 0.0,    c);
@@ -132,20 +152,20 @@ class QuadricArrow(GLPrimitiveNode):
         @param cyradius The radius of the cylinder used in the arrow shaft
         @param coradius The radius of the cone used in the arrow tip
         @param mid      The "mid point" or the percentage [0,1] along the length where the cylinder and cone join
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(QuadricArrow, self).__init__(self.__description__, parent)
 
         vector       = head - tail
         length       = vector.length()
 
-        self._cyradius     = cyradius
-        self._cyheight     = length  * mid
-        self._coradius     = coradius
-        self._coheight     = length - self._cyheight
+        self.__cyradius     = cyradius
+        self.__cyheight     = length  * mid
+        self.__coradius     = coradius
+        self.__coheight     = length - self.__cyheight
 
         # The arrow starts at the base point and points to the head.
-        self._transformation = Matrix4x4.translation(tail)
+        self.__transformation = Matrix4x4.translation(tail)
 
         # The positive Z-axis is the default direction fo Cylinder Quadrics in OpenGL.
         # If our vector is not parallel to the z-axis, e.g. (0, 0, Z), then rotate it.
@@ -156,48 +176,48 @@ class QuadricArrow(GLPrimitiveNode):
             zaxis  = Vector3D(0,0,1)
             angle  = zaxis.angle(vector)
             normal = zaxis.crossproduct(vector, True)
-            self._transformation *= Matrix4x4.rotation(angle, normal)
+            self.__transformation *= Matrix4x4.rotation(angle, normal)
 
         # The positive Z-axis is the default direction fo Cylinder Quadrics in OpenGL.
         # If our z is negative, we need to flip the arrow
         if vector.z < 0:
             yaxis  = Vector3D(1,0,0)
-            self._transformation *= Matrix4x4.rotation(math.radians(180), yaxis)
+            self.__transformation *= Matrix4x4.rotation(math.radians(180), yaxis)
 
 
-    def paintGL(self):
+    def _paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
-        super(QuadricArrow, self).paintGL()
+        super(QuadricArrow, self)._paintGL()
 
         with GLMatrixScope():
-            GL.glMultMatrixf(self._transformation.data())
+            GL.glMultMatrixf(self.__transformation.data())
 
             #Arrow Shaft
             quadric = GLU.gluNewQuadric()
             GLU.gluQuadricDrawStyle (quadric, GLU.GLU_FILL);
             GLU.gluQuadricNormals (quadric, GLU.GLU_SMOOTH);
-            GLU.gluCylinder(quadric, self._cyradius, self._cyradius, self._cyheight, 32, 1);
+            GLU.gluCylinder(quadric, self.__cyradius, self.__cyradius, self.__cyheight, 32, 1);
 
             quadric = GLU.gluNewQuadric()
             GLU.gluQuadricOrientation(quadric, GLU.GLU_INSIDE)
             GLU.gluQuadricDrawStyle(quadric, GLU.GLU_FILL);
             GLU.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
-            GLU.gluDisk(quadric, 0.0, self._cyradius, 32, 1);
+            GLU.gluDisk(quadric, 0.0, self.__cyradius, 32, 1);
 
             # Arrow Tip
-            GL.glTranslate(0, 0, self._cyheight);
+            GL.glTranslate(0, 0, self.__cyheight);
             quadric = GLU.gluNewQuadric()
             GLU.gluQuadricDrawStyle(quadric, GLU.GLU_FILL);
             GLU.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
-            GLU.gluCylinder(quadric, self._coradius, 0.0, self._coheight, 32, 1);
+            GLU.gluCylinder(quadric, self.__coradius, 0.0, self.__coheight, 32, 1);
 
             quadric = GLU.gluNewQuadric()
             GLU.gluQuadricOrientation(quadric, GLU.GLU_INSIDE)
             GLU.gluQuadricDrawStyle(quadric, GLU.GLU_FILL);
             GLU.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
-            GLU.gluDisk(quadric, 0.0, self._coradius, 32, 1);
+            GLU.gluDisk(quadric, 0.0, self.__coradius, 32, 1);
 
 
 class QuadricSphere(GLPrimitiveNode):
@@ -210,25 +230,25 @@ class QuadricSphere(GLPrimitiveNode):
         Constructor.
 
         @param radius   The radius of the sphere.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(QuadricSphere, self).__init__(self.__description__, parent)
-        self._radius = radius
-        self._quadric = GLU.gluNewQuadric()
+        self.__radius = radius
+        self.__quadric = GLU.gluNewQuadric()
 
-    def paintGL(self):
+    def _paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
-        super(QuadricSphere, self).paintGL()
+        super(QuadricSphere, self)._paintGL()
 
         with GLAttribScope(GL.GL_ENABLE_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_LINE_BIT | GL.GL_CURRENT_BIT):
             with GLClientAttribScope(GL.GL_CLIENT_VERTEX_ARRAY_BIT):
                 with GLMatrixScope(GL.GL_MODELVIEW, False):
-                    q = self._quadric
+                    q = self.__quadric
                     GLU.gluQuadricNormals(q, GLU.GLU_SMOOTH )
                     GLU.gluQuadricDrawStyle( q, GLU.GLU_FILL );
-                    GLU.gluSphere(q, self._radius, 32, 32)
+                    GLU.gluSphere(q, self.__radius, 32, 32)
 
 class ColorCubeObject(GLPrimitiveNode):
 
@@ -240,11 +260,11 @@ class ColorCubeObject(GLPrimitiveNode):
         Constructor.
 
         @param length   The length of one dimension of the cube.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(ColorCubeObject, self).__init__(self.__description__, parent)
-        self._length = length
-        self._vertices   = array.array('f' , [ i * (length / 2) for i in
+        self.__length = length
+        self.__vertices   = array.array('f' , [ i * (length / 2) for i in
                                               [-1 , -1 ,  1 ,
                                                -1 ,  1 ,  1 ,
                                                 1 ,  1 ,  1 ,
@@ -253,7 +273,7 @@ class ColorCubeObject(GLPrimitiveNode):
                                                -1 ,  1 , -1 ,
                                                 1 ,  1 , -1 ,
                                                 1 , -1 , -1] ] )
-        self._colors     = array.array('f' , [ 0 ,  0 ,  0 ,
+        self.__colors     = array.array('f' , [ 0 ,  0 ,  0 ,
                                                 1 ,  0 ,  1 ,
                                                 1 ,  1 ,  0 ,
                                                 1 ,  1 ,  0 ,
@@ -261,7 +281,7 @@ class ColorCubeObject(GLPrimitiveNode):
                                                 1 ,  0 ,  1 ,
                                                 1 ,  1 ,  1 ,
                                                 0 ,  1 ,  1] )
-        self._colorindex = array.array('B' , [ 0 ,  3 ,  2 ,
+        self.__colorindex = array.array('B' , [ 0 ,  3 ,  2 ,
                                                 1 ,  2 ,  3 ,
                                                 7 ,  6 ,  0 ,
                                                 4 ,  7 ,  3 ,
@@ -270,11 +290,11 @@ class ColorCubeObject(GLPrimitiveNode):
                                                 6 ,  7 ,  0 ,
                                                 1 ,  5 ,  4] )
 
-    def paintGL(self):
+    def _paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
-        super(ColorCubeObject, self).paintGL()
+        super(ColorCubeObject, self)._paintGL()
 
         with GLAttribScope(GL.GL_ENABLE_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_LINE_BIT | GL.GL_CURRENT_BIT):
             with GLClientAttribScope(GL.GL_CLIENT_VERTEX_ARRAY_BIT):
@@ -282,9 +302,9 @@ class ColorCubeObject(GLPrimitiveNode):
                     GL.glDisable( GL.GL_LIGHTING )
                     GL.glEnableClientState( GL.GL_COLOR_ARRAY )
                     GL.glEnableClientState( GL.GL_VERTEX_ARRAY )
-                    GL.glColorPointer( 3, GL.GL_FLOAT, 0, self._colors.tostring() )
-                    GL.glVertexPointer( 3, GL.GL_FLOAT, 0, self._vertices.tostring() )
-                    GL.glDrawElements( GL.GL_QUADS, 24, GL.GL_UNSIGNED_BYTE, self._colorindex.tostring( ) )
+                    GL.glColorPointer( 3, GL.GL_FLOAT, 0, self.__colors.tostring() )
+                    GL.glVertexPointer( 3, GL.GL_FLOAT, 0, self.__vertices.tostring() )
+                    GL.glDrawElements( GL.GL_QUADS, 24, GL.GL_UNSIGNED_BYTE, self.__colorindex.tostring( ) )
 
 class QuadricGnomon(GLPrimitiveNode):
 
@@ -296,24 +316,24 @@ class QuadricGnomon(GLPrimitiveNode):
         Constructor.
 
         @param length   The length of the individal arrows of the gnomon.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent SceneGraphNode instance.
         """
         super(QuadricGnomon, self).__init__(self.__description__, parent)
 
-        self._o = Vector3D();
-        self._x = Vector3D(length, 0, 0)
-        self._y = Vector3D(0, length, 0)
-        self._z = Vector3D(0, 0, length)
+        self.__o = Vector3D();
+        self.__x = Vector3D(length, 0, 0)
+        self.__y = Vector3D(0, length, 0)
+        self.__z = Vector3D(0, 0, length)
 
-        self._xarrow = QuadricArrow(self._x, self._o, 0.005, 0.05, 0.80, self)
-        self._yarrow = QuadricArrow(self._y, self._o, 0.005, 0.05, 0.80, self)
-        self._zarrow = QuadricArrow(self._z, self._o, 0.005, 0.05, 0.80, self)
+        self.__xarrow = QuadricArrow(self.__x, self.__o, 0.005, 0.05, 0.80, self)
+        self.__yarrow = QuadricArrow(self.__y, self.__o, 0.005, 0.05, 0.80, self)
+        self.__zarrow = QuadricArrow(self.__z, self.__o, 0.005, 0.05, 0.80, self)
 
-    def paintGL(self):
+    def _paintGL(self):
         """
         OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
-        super(QuadricGnomon, self).paintGL()
+        super(QuadricGnomon, self)._paintGL()
 
         with GLAttribScope(GL.GL_ENABLE_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_LINE_BIT | GL.GL_CURRENT_BIT):
             with GLClientAttribScope(GL.GL_CLIENT_VERTEX_ARRAY_BIT):
@@ -321,22 +341,22 @@ class QuadricGnomon(GLPrimitiveNode):
 
                     with GLMatrixScope(GL.GL_MODELVIEW, False):
                         GL.glColor(1, 0, 0)
-                        self._xarrow.paintGL()
+                        self.__xarrow.paintGL()
 
                     with GLMatrixScope(GL.GL_MODELVIEW, False):
                         GL.glColor(0, 1, 0)
-                        self._yarrow.paintGL()
+                        self.__yarrow.paintGL()
 
                     with GLMatrixScope(GL.GL_MODELVIEW, False):
                         GL.glColor(0, 0, 1)
-                        self._zarrow.paintGL()
+                        self.__zarrow.paintGL()
 
                     # Axes labels
                     GL.glDisable(GL.GL_DEPTH_TEST)
                     GL.glColor(1, 1, 1)
-                    GL.glRasterPos3fv(self._x.data())
+                    GL.glRasterPos3fv(self.__x.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('X'))
-                    GL.glRasterPos3fv(self._y.data())
+                    GL.glRasterPos3fv(self.__y.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Y'))
-                    GL.glRasterPos3fv(self._z.data())
+                    GL.glRasterPos3fv(self.__z.data())
                     GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Z'))

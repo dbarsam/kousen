@@ -28,7 +28,7 @@ class GLCameraNode(GLNode, CameraNode):
         @param zfar     The distance from position to the far clipping plane. If None, it will default to CameraNode.__camera_zfar__.
         @param swidth   The initial screen width (in pixels). If None, it will default to CameraNode.__camera_swidth__.
         @param sheight  The initial screen height (in pixels). If None, it will default to CameraNode.__camera_sheight__.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent AbstractSceneGraphItem instance.
         """
         super(GLCameraNode, self).__init__(position, target, up, fov, znear, zfar, swidth, sheight, parent)
 

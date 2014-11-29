@@ -19,14 +19,14 @@ class GLCameraHUDNode(GLNode, CameraHUDNode):
         Constructor.
 
         @param camera   An instance of CameraNode to monitor.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent AbstractSceneGraphItem instance.
         """
         super(GLCameraHUDNode, self).__init__(camera, parent)
         self._gnomon = QuadricGnomon(0.4, self)
 
-    def paintGL(self):
+    def _paintGL(self):
         """
-        OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
+        Internal OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
         """
         # Gnomon
         GL.glViewport(10,10,80,80)

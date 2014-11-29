@@ -1,21 +1,35 @@
 # -*- coding: utf-8 -*-
 from PySide import QtCore, QtGui
-
 from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
 
-class SceneGraphItem(AbstractDataTreeItem):
+class AbstractSceneItemData(AbstractData):
     """
-    The Scene Item represents a component of the scene in the scene hierarchy.
+    The AbstractSceneItemData represents a simplied AbstractData configured specifically for a AbstractSceneGraphItem.
     """
-    # Additional Meta Information
-    __category__     = "<unknown>"
-    __description__  = "<Invalid Scene Graph Item>"
-    __icon__         = None
-    __instantiable__ = False
+    def __init__(self, name, icon, description, parent=None):
+        """
+        Constructor.
+
+        @param name         The name value.
+        @param icon         The decoration value.
+        @param description  The tool tip decoration value.
+        @param parent       The initial parent AbstractDataTreeItem.
+        """
+        super(AbstractSceneItemData, self).__init__(None, parent)
+        self[QtCore.Qt.DisplayRole, AbstractSceneGraphItem.Fields.NAME]        = name
+        self[QtCore.Qt.DecorationRole, AbstractSceneGraphItem.Fields.NAME]     = QtGui.QIcon(QtGui.QPixmap(icon))
+        self[QtCore.Qt.ToolTipRole, AbstractSceneGraphItem.Fields.NAME]        = description
+        self[QtCore.Qt.AccessibleTextRole, AbstractSceneGraphItem.Fields.NAME] = name
+        self[QtCore.Qt.EditRole, AbstractSceneGraphItem.Fields.NAME]           = name
+
+class AbstractSceneGraphItem(AbstractDataTreeItem):
+    """
+    The AbstractSceneGraphItem represents an entry an the AbstractSceneGraphModel.
+    """
 
     class Fields(AbstractDataFields):
         """
-        The Fields class provides an enumeration of the various fields within a SceneGraphItem.
+        The Fields class provides an enumeration of the various fields within a AbstractSceneGraphItem.
         """
         NAME = 0
 
@@ -42,15 +56,14 @@ class SceneGraphItem(AbstractDataTreeItem):
         """
         return False
 
-    def __init__(self, sdata={}, parent=None):
+    def __init__(self, sdata, parent):
         """
         Constructor.
 
         @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
-        @param parent  The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
+        @param parent  The initial AbstractDataTreeItem-derived parent of this AbstractSceneGraphItem
         """
-        super(SceneGraphItem, self).__init__(sdata, parent)
-
+        super(AbstractSceneGraphItem, self).__init__(sdata, parent)
         self._restore = {}
 
     def reset(self):
@@ -73,40 +86,65 @@ class SceneGraphItem(AbstractDataTreeItem):
         Generates an inclusive list of node and children based on a boolean expression evaluation.
 
         @param   condition A lambda expression used to recursively evaluate each node.
-        @returns           A list of SceneGraphItem that succesfully evaluate the condition.
+        @returns           A list of AbstractSceneGraphItem that succesfully evaluate the condition.
         """
         result = [self] if condition(self) else []
         for child in self._children:
             result += child.filter(condition)
         return result
 
-class SceneGraphRoot(SceneGraphItem):
+class SceneGraphNode(AbstractSceneGraphItem):
     """
-    The Scene Graph Root represents a top most node in a complete scene hierarchy.
+    The Scene Graph Node represents a common node in a scene graph hierarchy.
     """
-    def __init__(self, sdata={}, parent=None):
+    # Additional Meta Information
+    __category__     = "<unknown>"
+    __description__  = "<Invalid Scene Graph Item>"
+    __icon__         = None
+    __instantiable__ = False
+
+    def __init__(self, name, parent):
+        """
+        Constructor.
+
+        @param name    The initial name of the node.
+        @param parent  The initial AbstractSceneGraphItem-derived parent of this AbstractSceneGraphItem.
+        """
+        super(SceneGraphNode, self).__init__(AbstractSceneItemData(name, self.__icon__, self.__description__), parent)
+
+class SceneGraphRoot(AbstractSceneGraphItem):
+    """
+    The Scene Graph Root represents a top-most node in a scene graph hierarchy.
+    """
+    # Additional Meta Information
+    __category__     = "<unknown>"
+    __description__  = "<Invalid Scene Graph Item>"
+    __icon__         = None
+    __instantiable__ = False
+
+    def __init__(self, sdata):
         """
         Constructor.
 
         @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
-        @param parent  The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
         """
-        super(SceneGraphRoot, self).__init__(sdata, parent)
+        super(SceneGraphRoot, self).__init__(sdata, None)
+        self._internal = sdata
 
-class SceneGraphModel(AbstractDataTreeModel):
+class AbstractSceneGraphModel(AbstractDataTreeModel):
     """
     The Scene Model represents a complete scene hierarchy.
     """
     SceneGraphItemType = []
 
-    def __init__(self, headerdata, parent=None):
+    def __init__(self, parent):
         """
         Constructor.
 
         @param headerdata The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
         @param parent     The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
         """
-        super(SceneGraphModel, self).__init__(headerdata, parent)
+        super(AbstractSceneGraphModel, self).__init__(AbstractSceneGraphItem.Fields.headerdata(), parent)
         self._camera = None
 
     @property
@@ -143,14 +181,14 @@ class SceneGraphModel(AbstractDataTreeModel):
         @param   args A variable size list of arguments to be passed to the created node.
         @returns  An instantiated node.
         """
-        return SceneGraphItem(*args)
+        return SceneGraphNode(*args)
 
     def filter(self, condition):
         """
         Generates an inclusive list of node and children based on a boolean expression evaluation.
 
         @param   condition A lambda expression used to recursively evaluate each node.
-        @returns           A list of SceneGraphItem that succesfully evaluate the condition.
+        @returns           A list of AbstractSceneGraphItem that succesfully evaluate the condition.
         """
         return self._root.filter(condition)
 
@@ -160,7 +198,7 @@ class SceneGraphType(AbstractDataTreeItem):
     """
     class Fields(AbstractDataFields):
         """
-        The Fields class provides an enumeration of the various fields within a SceneGraphItem.
+        The Fields class provides an enumeration of the various fields within a AbstractSceneGraphItem.
         """
         NAME  = 0
         CLASS = 1
@@ -225,7 +263,7 @@ class SceneGraphTypeTreeModel(AbstractDataTreeModel):
         self.beginResetModel()
         self.clear()
 
-        classes = sorted([c for c in SceneGraphItem.subclasses() if c.__instantiable__], key=(lambda x: x.__category__))
+        classes = sorted([c for c in AbstractSceneGraphItem.subclasses() if c.__instantiable__], key=(lambda x: x.__category__))
         for key, group in groupby(classes, lambda x: x.__category__):
             subroot = self.createItem([key, None], None)
             qindex = self.appendItem(subroot)
@@ -233,7 +271,7 @@ class SceneGraphTypeTreeModel(AbstractDataTreeModel):
             for groupitem in group:
                 sdata = AbstractData.BuildData([groupitem.__description__, groupitem])
                 if groupitem.__icon__:
-                    sdata[QtCore.Qt.DecorationRole, SceneGraphItem.Fields.NAME] = QtGui.QIcon(QtGui.QPixmap(groupitem.__icon__))
+                    sdata[QtCore.Qt.DecorationRole, AbstractSceneGraphItem.Fields.NAME] = QtGui.QIcon(QtGui.QPixmap(groupitem.__icon__))
                 subitem = self.createItem(sdata, None)
                 self.appendItem(subitem, parentIndex)
 

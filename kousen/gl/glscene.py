@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 from OpenGL import GL
 from OpenGL import GLU
 from OpenGL import GLUT
-from kousen.scenegraph import SceneGraphItem, SceneGraphModel
+from kousen.scenegraph import SceneGraphRoot, SceneGraphNode, AbstractSceneGraphModel
 from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 
 class GLNode(object):
@@ -33,12 +33,33 @@ class GLNode(object):
         for child in self._children:
             child.projectionGL()
 
+    def _prepaintGL(self):
+        """
+        Internal OpenGL Render operation.  Execute any logic required before the Draw callback.
+        """
+        pass
+
+    def _paintGL(self):
+        """
+        Internal OpenGL Render operation.  Execute any logic required during the Draw callback.
+        """
+        pass
+
+    def _postpaintGL(self):
+        """
+        Internal OpenGL Render operation.  Execute any logic required after the Draw callback.
+        """
+        pass
+
     def paintGL(self):
         """
         OpenGL Render operation.  Execute any logic required during the Draw callback.
         """
+        self._prepaintGL()
+        self._paintGL()
         for child in self._children:
             child.paintGL()
+        self._postpaintGL()
 
     def overlayGL(self):
         """
@@ -58,31 +79,43 @@ class GLNode(object):
             child.resizeGL(width, height)
 
 
-class GLSceneNode(GLNode, SceneGraphItem):
+class GLSceneNode(GLNode, SceneGraphNode):
     """
-    The GLSceneNode extends SceneGraphItem with the functionality of GLNode.
+    The GLSceneNode extends SceneGraphNode with the functionality of GLNode.
     """
-    def __init__(self, sdata={}, parent=None):
+    def __init__(self, name, parent=None):
         """
         Constructor.
 
         @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
         @param parent  The initial parent GLSceneNode of this GLSceneNode
         """
-        super(GLSceneNode, self).__init__(sdata, parent)
+        super(GLSceneNode, self).__init__(name, parent)
 
-class GLSceneModel(SceneGraphModel):
+class GLSceneRoot(GLNode, SceneGraphRoot):
     """
-    The GLSceneModel provides a SceneGraphModel for GLSceneNodes.
+    The GLSceneRoot extends SceneGraphRoot with the functionality of GLNode.
     """
-    def __init__(self, headerdata, parent=None):
+    def __init__(self, sdata):
         """
         Constructor.
 
-        @param headerdata The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
+        @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
+        @param parent  The initial parent GLSceneNode of this GLSceneNode
+        """
+        super(GLSceneRoot, self).__init__(sdata)
+
+class GLSceneModel(AbstractSceneGraphModel):
+    """
+    The GLSceneModel provides a AbstractSceneGraphModel for GLSceneNodes.
+    """
+    def __init__(self, parent=None):
+        """
+        Constructor.
+
         @param parent     The initial QObject parent this GLSceneModel
         """
-        super(GLSceneModel, self).__init__(headerdata, parent)
+        super(GLSceneModel, self).__init__(parent)
         self.rowsInserted.connect(self._rowsInserted)
 
     def _rowsInserted(self, parent, start, end):
@@ -100,16 +133,16 @@ class GLSceneModel(SceneGraphModel):
 
     def createRoot(self, *args):
         """
-        Overrides the SceneGraphModel's createRoot method.
+        Overrides the AbstractSceneGraphModel's createRoot method.
 
         @param   args A variable size list of arguments to be passed to the created root node.
         @returns      An instantiated GLSceneNode root node.
         """
-        return GLSceneNode(*args)
+        return GLSceneRoot(*args)
 
     def createItem(self, *args):
         """
-        Implements the SceneGraphModel's createItem method.
+        Implements the AbstractSceneGraphModel's createItem method.
 
         @param   args A variable size list of arguments to be passed to the created node.
         @returns      An instantiated GLSceneNode node.

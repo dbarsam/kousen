@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from PySide import QtCore, QtGui
-from kousen.scenegraph.object import ObjectNode
+from kousen.scenegraph.transform import TransformationNode
 
-class PrimitiveNode(ObjectNode):
+class ObjectNode(TransformationNode):
     """
-    PrimitiveNode provides a base class for all gemetric object implementation of an ObjectNode.
+    The ObjectNode extends the TransformationNode with the functionality to represent a physical entity in the Scene Graph.
     """
     # Additional Meta Information
-    __category__     = "Primitive Node"
+    __category__     = "Object Node"
     __icon__         = ":/icons/node.png"
     __description__  = "<Unknown Primitive>"
 
@@ -18,4 +18,4 @@ class PrimitiveNode(ObjectNode):
         @param name    The display name of the node.
         @param parent  The initial AbstractDataTreeItem-derived parent.
         """
-        super(PrimitiveNode, self).__init__(name, parent)
+        super(ObjectNode, self).__init__(name, parent)

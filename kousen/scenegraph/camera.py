@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 import math
 from PySide import QtGui, QtCore
-from OpenGL import GL
-from kousen.scenegraph import SceneGraphItem
+from kousen.scenegraph import ObjectNode
 from kousen.math import Point3D, Vector3D, Matrix4x4
 from kousen.math.conic import coniclength, conicwidth
 
-class CameraNode(SceneGraphItem):
+class CameraNode(ObjectNode):
     """
-    The Camera Node provides Camera implementation of a SceneGraphItem.
+    The Camera Node provides Camera implementation of a AbstractSceneGraphItem.
     """
     # Additional Meta Information
     __category__     = "Camera Node"
     __icon__         = ":/icons/camera.png"
+    __description__  = "Camera"
 
     # Camera default values
     __camera_target__   = Point3D(0, 0, 0)
@@ -29,7 +29,7 @@ class CameraNode(SceneGraphItem):
     __camera_max_screen_rotation__ = 180.0
 
     def __init__(self, position=None, target=None, up=None, fov=None, znear=None, zfar=None, swidth=None, sheight=None, parent=None):
-        super(CameraNode, self).__init__({}, parent)
+        super(CameraNode, self).__init__("camera", parent)
         """
         Constructor.
 
@@ -41,7 +41,7 @@ class CameraNode(SceneGraphItem):
         @param zfar     The distance from position to the far clipping plane. If None, it will default to CameraNode.__camera_zfar__.
         @param swidth   The initial screen width (in pixels). If None, it will default to CameraNode.__camera_swidth__.
         @param sheight  The initial screen height (in pixels). If None, it will default to CameraNode.__camera_sheight__.
-        @param parent   The parent SceneGraphItem instance.
+        @param parent   The parent AbstractSceneGraphItem instance.
         """
 
         # Register the 'reset' data
@@ -55,14 +55,43 @@ class CameraNode(SceneGraphItem):
         self._restore['_up']           = (up or self.__camera_upvector__).duplicate()
         self._restore['_viewport']     = self.viewport(self._restore['_fov'], self._restore['_screenwidth'], self._restore['_screenheight'], self._restore['_znear'])
 
-        # Register the 'reset' data
-        self._staticdata[QtCore.Qt.DisplayRole, SceneGraphItem.Fields.NAME]        = "Camera"
-        self._staticdata[QtCore.Qt.DecorationRole, SceneGraphItem.Fields.NAME]     = QtGui.QIcon(QtGui.QPixmap(self.__icon__))
-        self._staticdata[QtCore.Qt.ToolTipRole, SceneGraphItem.Fields.NAME]        = "Camera"
-        self._staticdata[QtCore.Qt.AccessibleTextRole, SceneGraphItem.Fields.NAME] = "Camera"
-        self._staticdata[QtCore.Qt.EditRole, SceneGraphItem.Fields.NAME]           = "Camera"
-
         self.reset()
+
+    @property
+    def znear(self):
+        return self._znear;
+
+    @property
+    def zfar(self):
+        return self._zfar;
+
+    @property
+    def screenwidth(self):
+        return self._screenwidth;
+
+    @property
+    def screenheight(self):
+        return self._screenheight;
+
+    @property
+    def fov(self):
+        return self._fov;
+
+    @property
+    def position(self):
+        return self._position;
+
+    @property
+    def target(self):
+        return self._target;
+
+    @property
+    def up(self):
+        return self._up;
+
+    @property
+    def viewport(self):
+        return self._viewport;
 
     def resize(self, width, height):
         """
