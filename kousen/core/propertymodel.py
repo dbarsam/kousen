@@ -20,7 +20,7 @@ class AbstractPropertyItem(AbstractDataTreeItem):
         Constructor.
 
         @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
-        @param parent  The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
+        @param parent  The initial parent AbstractDataTreeItem of this AbstractPropertyItem
         """
         super(AbstractPropertyItem, self).__init__(sdata, parent)
         
