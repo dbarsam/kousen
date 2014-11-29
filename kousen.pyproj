@@ -11,8 +11,8 @@
     <OutputPath>.</OutputPath>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <InterpreterId>{a60cf3ca-66e0-4daa-bbc5-4d3c8c7e59fe}</InterpreterId>
-    <InterpreterVersion>3.3</InterpreterVersion>
+    <InterpreterId>{3c30b5a5-7a4b-4c80-8341-6f40b309f0ef}</InterpreterId>
+    <InterpreterVersion>3.4</InterpreterVersion>
     <IsWindowsApplication>False</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
@@ -69,10 +69,10 @@
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include=".env\">
-      <Id>{a60cf3ca-66e0-4daa-bbc5-4d3c8c7e59fe}</Id>
+      <Id>{3c30b5a5-7a4b-4c80-8341-6f40b309f0ef}</Id>
       <BaseInterpreter>{2af0f10d-7135-4994-9156-5d01c9c11b7e}</BaseInterpreter>
-      <Version>3.3</Version>
-      <Description>_env (Python 3.3)</Description>
+      <Version>3.4</Version>
+      <Description>_env (Python 3.4)</Description>
       <InterpreterPath>Scripts\python.exe</InterpreterPath>
       <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
       <LibraryPath>Lib\</LibraryPath>
