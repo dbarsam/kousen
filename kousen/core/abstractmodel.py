@@ -854,7 +854,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         Constructor.
 
         @param headerdata The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
-        @param parent     The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
+        @param parent     The QObject parent object.
         """
         super(AbstractDataTreeModel, self).__init__(parent)
 
