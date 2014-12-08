@@ -2,6 +2,6 @@
 rem Backup Current Directory
 pushd %~dp0
 
-start ..\.env\Lib\site-packages\PySide-1.2.2-py3.3-win32.egg\PySide\designer.exe 
+start ..\.env\Lib\site-packages\PySide\designer.exe 
 
 popd
