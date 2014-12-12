@@ -4,7 +4,7 @@ import os
 from PySide import QtGui, QtCore
 from kousen.math import Point3D
 from kousen.core.propertymodel import PropertyItem, PropertyModel
-from kousen.core.proxymodel import ColumnFilterProxyModel, UndoRedoProxyModel, TreeColumnFilterProxyModel
+from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel
 from kousen.gl.glscene import GLSceneNode, GLSceneModel
 from kousen.gl.glcamera import *
 from kousen.gl.glhud import *
@@ -13,6 +13,7 @@ from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAt
 from kousen.ui.itemdialog import ItemCreationDialog
 from kousen.ui.uiloader import UiLoader
 from kousen.ui.editorfactory import ItemEditorFactoryDelegate
+from kousen.core.undomodel import UndoMacro
 
 __form_class__, __base_class__ = UiLoader.loadUiType(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'mainwindow.ui'))
 
@@ -38,6 +39,10 @@ class MainWindow(__form_class__, __base_class__):
         """
         super(MainWindow, self).setupUi(widget)
 
+        # Undo View
+        self._undoStack = QtGui.QUndoStack(self);
+        self.commandHistory.setStack(self._undoStack)
+
         # Scene Graph Explorer
         self.sceneExplorer.reloadable = False
         self.sceneExplorer.immediate = True
@@ -59,6 +64,7 @@ class MainWindow(__form_class__, __base_class__):
         self.propertyEditor.view.setEditTriggers(QtGui.QAbstractItemView.CurrentChanged)
         self.propertyEditor.view.setItemDelegateForColumn(PropertyItem.Fields.VALUE, ItemEditorFactoryDelegate(self.propertyEditor.view))
         self.propertyEditor.push(PropertyModel(PropertyItem.Fields.headerdata(), self))
+        self.propertyEditor.model.setUndoModel(self._undoStack)
         self.propertyEditor.push(TreeColumnFilterProxyModel())
 
         # Actions
@@ -69,6 +75,12 @@ class MainWindow(__form_class__, __base_class__):
         self.actionReleasePrimaryCamera.triggered.connect(self._cameraRelease)
         self.dockSceneExplorer.toggleViewAction().toggled.connect(self.actionViewSceneExplorer.setChecked)
         self.dockPropertyEditor.toggleViewAction().toggled.connect(self.actionViewPropertyEditor.setChecked)
+        self.dockCommandHistory.toggleViewAction().toggled.connect(self.actionViewCommandHistory.setChecked)
+        self.actionEditRedo.triggered.connect(self._redoAction)
+        self.actionEditUndo.triggered.connect(self._undoAction)
+
+        # Menus
+        self.menuEdit.aboutToShow.connect(self._editAboutToShow)
 
     def _testScene(self):
         """
@@ -77,18 +89,63 @@ class MainWindow(__form_class__, __base_class__):
         self.actionNewScene.trigger()
         self._nodeInsert([ColorCubeObject()])
 
-    def _dataChanged(self, topLeft, bottomRight):
-        pass
+    def _editAboutToShow(self):
+        """
+        Handles the Edit Menu before it is shown to the user.
+        """
+        self.actionEditUndo.setEnabled(self._undoStack.canUndo())
+        self.actionEditRedo.setEnabled(self._undoStack.canRedo())
+
+    def _sceneDataChanged(self, topLeft, bottomRight):
+        """
+        Handles any change in scene data.
+        """
+        self.glwidget.update()
+
+    def _sceneRowsInserted(self, parent, start, end):
+        """
+        Handles scene items being added to the scene model.
+        """
+        self.glwidget.update()
+
+    def _sceneRowsRemoved(self, parent, start, end):
+        """
+        Handles scene items being remove from the scene model.
+        """
+        self.glwidget.update()
+
+    def _undoAction(self):
+        """
+        Executes the undo operation from the current action in the undo model.
+        """
+        if self._undoStack.canUndo():
+            self._undoStack.undo()
+
+    def _redoAction(self):
+        """
+        Executes the redo operation from the current action in the undo model.
+        """
+        if self._undoStack.canRedo():
+            self._undoStack.redo()
 
     def _sceneNew(self):
         """
         Creates a new scene.
         """
+        # Undo Stack
+        self._undoStack.clear()
+
         # Scene Graph Model
         if self._sceneGraph:
-            self._sceneGraph.dataChanged.disconnect(self._dataChanged)
+            self._sceneGraph.setUndoModel(None)
+            self._sceneGraph.dataChanged.disconnect(self._sceneDataChanged)
+            self._sceneGraph.rowsInserted.disconnect(self._sceneRowsInserted)
+            self._sceneGraph.rowsRemoved.disconnect(self._sceneRowsRemoved)
         self._sceneGraph = GLSceneModel(self)
-        self._sceneGraph.dataChanged.connect(self._dataChanged)
+        self._sceneGraph.setUndoModel(self._undoStack)
+        self._sceneGraph.dataChanged.connect(self._sceneDataChanged)
+        self._sceneGraph.rowsInserted.connect(self._sceneRowsInserted)
+        self._sceneGraph.rowsRemoved.connect(self._sceneRowsRemoved)
 
         # Scene Graph Explorer's Scene Graph Model Views
         self.sceneExplorer.clear()
@@ -98,9 +155,10 @@ class MainWindow(__form_class__, __base_class__):
         # OpenGL Scene Graph Model View
         self.glwidget.setModel(self._sceneGraph)
 
-        camera = GLCameraNode()
-        self._nodeInsert([camera, GLCameraHUDNode(camera), GridObject(16, 1)], False)
-        self._cameraActivate(camera)
+        with UndoMacro(self._undoStack, "New Scene"):
+            camera = GLCameraNode()
+            self._nodeInsert([camera, GLCameraHUDNode(camera), GridObject(16, 1)], False)
+            self._cameraActivate(camera)
 
     def _nodeInsert(self, nodes=[], autoselect=True):
         """
@@ -118,10 +176,9 @@ class MainWindow(__form_class__, __base_class__):
         indexes = []
         for node in nodes:
             for parentIndex in parentIndexes:
-                indexes.append( self.sceneExplorer.source.appendItem(node, parentIndex) )
+                indexes.extend( self.sceneExplorer.source.appendItem(node, parentIndex) )
 
         if indexes:
-            self.glwidget.update()
             if autoselect:
                 self.sceneExplorer.selectedIndexes = indexes
 
@@ -133,10 +190,9 @@ class MainWindow(__form_class__, __base_class__):
         """
         if not nodes:
             nodes = self.sceneExplorer.selectedItems
+
         for node in nodes:
             self.sceneExplorer.source.removeItem(node)
-        if nodes:
-            self.glwidget.update()
 
     def _cameraActivate(self, node=None):
         """
@@ -210,4 +266,3 @@ class MainWindow(__form_class__, __base_class__):
         sourceSelected = self.propertyEditor.mapSelectionToSource(selected)
         if sourceSelected:
             pass
-

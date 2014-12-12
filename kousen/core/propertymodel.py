@@ -228,6 +228,31 @@ class PropertyModel(AbstractDataTreeModel):
         """
         return PropertyItem(*args)
 
+    def createSetDataCommand(self, item, index, value, role):
+        """
+        Generates a new instance of the internal SetDataCommand given the arguments.
+
+        @param item  The instance of the AbstractDataItem containing the data.
+        @param index The index of the AbstractDataItem within the parent model.
+        @param value The new value of the AbstractDataItem's data.
+        @param role  The role of the AbstractDataItem's data.
+        @returns     An instantiated AbstractSetDataCommand.
+        """
+        return SetPropertyValueCommand(item, index, value, role)
+
+    def executeCommand(self, command):
+        """
+        Executes a command.
+
+        @param command  The instance of an QUndoCommand object.
+        @returns        The result from command execution if succesful; None otherwise.
+        """
+        if self._undostack and isinstance(command, SetPropertyValueCommand):
+            self._undostack.push(command)
+        else:
+            command.redo()
+        return command.result()
+
     def insertProperties(self, objects, parent=QtCore.QModelIndex()):
         """
         Inserts a list of Python property objects derived from a list of objects.
@@ -273,3 +298,54 @@ class PropertyModel(AbstractDataTreeModel):
                 if pitem.isEmpty():
                     self.removeItem(pitem, parent)
                     parentItem.removePropertyItem(object.__class__, name)
+
+class SetPropertyValueCommand(QtGui.QUndoCommand):
+    """
+    The SetPropertyValueCommand class implements a command to store a value via a Property Item.
+    """
+
+    def __init__(self, item, index, value, role, text=None, parent=None):
+        """
+        Constructor.
+
+        @param item     The Property Item.
+        @param index    The index of the Propety item in the parent model.
+        @param value    The new value to store.
+        @param role     The Qt Role of the value.
+        @param text     The QUndoCommand display text.
+        @param parent   The QObject parent of the QUndoCommand
+        """
+        super(SetPropertyValueCommand, self).__init__(text, parent)
+
+        self._property = item._property
+        self._components = item._components
+        self._oldvalues = [(c, self._property.fget(c)) for c in self._components]
+        self._value = value
+        if not text:
+            valueLabel = item.data(AbstractPropertyItem.Fields.NAME, QtCore.Qt.DisplayRole)
+            roleLabel = next((n for n, r in QtCore.Qt.ItemDataRole.values.items() if r == role), "<Unknown>")
+            self.setText("Set Property Value: '{0}' => {1} (Role: {2})".format(valueLabel, self._value, roleLabel))
+
+    def redo(self):
+        """
+        Executes the apply action of the command.
+        """
+        super(SetPropertyValueCommand, self).redo()
+        for c in self._components:
+            self._property.fset(c, self._value)
+
+    def undo(self):
+        """
+        Executes the cancel action of the command.
+        """
+        super(SetPropertyValueCommand, self).undo()
+        for c, v in self._oldvalues:
+           self._property.fset(c, v)
+
+    def result(self):
+        """
+        Returns the result of the last redo execution.
+
+        @returns True there is not result.
+        """
+        return True

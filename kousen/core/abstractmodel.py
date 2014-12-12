@@ -216,6 +216,23 @@ class AbstractDataItem(QtCore.QObject):
         super(AbstractDataItem, self).__init__(parent)
         self._staticdata = sdata if isinstance(sdata, AbstractData) else AbstractData.BuildData(sdata)
 
+    def __repr__(self):
+        """
+        Generates the "official" string representation of the AbstractDataItem
+
+        @returns The class name of the AbstractDataItem
+        """
+        return self.__class__.__name__
+
+    def __str__(self):
+        """
+        Generates the "informal" string representation of the AbstractDataItem.
+
+        @returns The class name of the AbstractDataItem
+        """
+        return self.__class__.__name__
+
+
     def __getitem__(self, id):
         """
         The [] operator getter.
@@ -540,6 +557,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
 
         self._items = []
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        self._undostack = None
 
     def _dataChanging(self, topLeft, bottomRight=None):
         """
@@ -575,7 +593,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         @param item  The item to append to end of the internal collection.
         @param index The internal index of the item in the internal collection.
         """
-        self._items.insert(position, item)
+        self._items.insert(index, item)
         self._itemConnect(item)
 
     def _itemRemove(self, item):
@@ -601,6 +619,7 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
             self._itemDisconnect(item)
         except IndexError:
             pass
+        return item
 
     def _itemConnect(self, item):
         """
@@ -644,6 +663,32 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         return AbstractDataItem(*args)
 
+    def createSetDataCommand(self, item, index, value, role):
+        """
+        Generates a new instance of the internal SetDataCommand given the arguments.
+
+        @param item  The instance of the AbstractDataItem containing the data.
+        @param index The index of the AbstractDataItem within the parent model.
+        @param value The new value of the AbstractDataItem's data.
+        @param role  The role of the AbstractDataItem's data.
+        @returns     An instantiated AbstractSetDataCommand if succesful; None otherwise.
+        """
+        oldvalue = self.data(index, role)        
+        return AbstractSetDataCommand(item, index.column(), value, oldvalue, role) if oldvalue != value else None
+
+    def executeCommand(self, command):
+        """
+        Executes a command.
+
+        @param command  The instance of an QUndoCommand object.
+        @returns        The result from command execution if succesful; None otherwise.
+        """
+        if self._undostack:
+            self._undostack.push(command)
+        else:
+            command.redo()
+        return command.result()
+
     def columnCount(self, parent = QtCore.QModelIndex()):
         """
         Returns the number of columns in this model.
@@ -655,6 +700,18 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         Returns the length of the item list.
         """
         return len(self._items)
+
+    def undoModel(self):
+        """
+        Returns the undo stack being used by this model.
+        """
+        return self._undostack
+
+    def setUndoModel(self, model):
+        """
+        Sets the undo stack being used by this model.
+        """
+        self._undostack = model
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """
@@ -668,7 +725,11 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         Sets the model data at a given index, filtered by the given role to the value.
         """
         item = self.item(index)
-        return item.setData(index.column(), value, role) if item else False
+        if not item:
+            return False
+
+        command = self.createSetDataCommand(item, index, value, role)
+        return self.executeCommand(command)
 
     def flags(self, index):
         """
@@ -778,14 +839,8 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
 
         @returns The QModelIndex of the insert operation.
         """
-        nextIndex = self.rowCount()
-        lastIndex = nextIndex
-        self.beginInsertRows(QtCore.QModelIndex(), nextIndex, lastIndex)
-
-        self._itemInsert(item)
-
-        self.endInsertRows()
-        return self.itemIndex(item)
+        command = InsertItemCommand(self, self.rowCount(), [item], QtCore.QModelIndex())
+        return self.executeCommand(command)
 
     def removeItem(self, item):
         """
@@ -795,25 +850,16 @@ class AbstractDataListModel(QtCore.QAbstractListModel):
         """
         return self.removeRows(self.index(item).row())
 
-    def insertRows(self, position, rows=1, index=QtCore.QModelIndex()):
+    def insertRows(self, position, rows=1, parent=QtCore.QModelIndex()):
         """
         Insert a rows with an empty DataItems into the model.
 
         @returns A list of respective QModelIndexes of the insert operation.
         """
-        endIndex  = position + rows
-        nextIndex = position
-        lastIndex = endIndex - 1
-        items = []
-        self.beginInsertRows(QtCore.QModelIndex(), nextIndex, lastIndex)
+        items = [self.createItem() for i in range(position, rows)]
 
-        for row in range(nextIndex, endIndex):
-            item = self.createItem()
-            items.append(item)
-            self._itemInsert(item, row)
-
-        self.endInsertRows()
-        return [self.itemIndex(item) for item in items]
+        command = InsertItemCommand(self, position, items, parent)
+        return self.executeCommand(command)
 
     def removeRows(self, position, rows=1, index=QtCore.QModelIndex()):
         """
@@ -860,6 +906,7 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
 
         self._root  = self.createRoot(headerData)
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        self._undostack = None
 
     def _dataChanging(self, topLeft, bottomRight=None):
         """
@@ -945,7 +992,8 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
             item.setParent(None)
             self._itemDisconnect(item)
         except IndexError:
-            pass
+            return None
+        return item
 
     def _itemConnect(self, item):
         """
@@ -981,6 +1029,32 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         return AbstractDataTreeItem(*args)
 
+    def createSetDataCommand(self, item, index, value, role):
+        """
+        Generates a new instance of the internal SetDataCommand given the arguments.
+
+        @param item  The instance of the AbstractDataItem containing the data.
+        @param index The index of the AbstractDataItem within the parent model.
+        @param value The new value of the AbstractDataItem's data.
+        @param role  The role of the AbstractDataItem's data.
+        @returns     An instantiated AbstractSetDataCommand if succesful; None otherwise.
+        """
+        oldvalue = self.data(index, role)        
+        return AbstractSetDataCommand(item, index.column(), value, oldvalue, role) if oldvalue != value else None
+
+    def executeCommand(self, command):
+        """
+        Executes a command.
+
+        @param command  The instance of an QUndoCommand object.
+        @returns        The result from command execution if succesful; None otherwise.
+        """
+        if self._undostack:
+            self._undostack.push(command)
+        else:
+            command.redo()
+        return command.result()
+
     def columnCount(self, parent = QtCore.QModelIndex()):
         """
         Returns the number of columns in this model.
@@ -994,6 +1068,18 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         parentItem = self.item(parent)
         return parentItem.rowCount()
+
+    def undoModel(self):
+        """
+        Returns the undo stack being used by this model.
+        """
+        return self._undostack
+
+    def setUndoModel(self, model):
+        """
+        Sets the undo stack being used by this model.
+        """
+        self._undostack = model
 
     def data(self, index, role):
         """
@@ -1013,10 +1099,8 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         if not item:
             return False
 
-        if not item.setData(index.column(), value, role):
-            return False
-
-        return True
+        command = self.createSetDataCommand(item, index, value, role)
+        return self.executeCommand(command)
 
     def flags(self, index):
         """
@@ -1146,63 +1230,45 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         @returns The QModelIndex of the insert operation.
         """
         parentItem = self.item(parent)
-        nextIndex  = parentItem.childCount()
-        lastIndex  = nextIndex
 
-        self.beginInsertRows(parent, nextIndex, lastIndex)
-
-        self._itemInsertPosition(parentItem, item, nextIndex)
-
-        self.endInsertRows()
-        return self.itemIndex(item)
+        command = InsertItemCommand(self, parentItem.childCount(), [item], parent)
+        return self.executeCommand(command)
 
     def removeItem(self, item, parent=QtCore.QModelIndex()):
         """
         Removes an existing AbstractDataTreeItem from the model.
 
-        @param item The item to remove.
+        @param item   The item to remove.
         @param parent The index of the parent item in the model.
-        @returns True if removal was succesful; False otherwise.
+        @returns      True if removal was succesful; False otherwise.
         """
         return self.removeRows(item.row(), 1, parent)
 
     def insertRows(self, position, rows, parent=QtCore.QModelIndex()):
         """
-        Removes an existing AbstractDataTreeItem from the model.
+        Inserts a sequence of new AbstractDataTreeItem instances into the model.
 
-        @param item The item to remove.
-        @param parent The index of the parent item in the model.
+        @param position    The starting row in the model for the first item.
+        @param rows        The number of items to create and insert.
+        @param parentIndex The index of the parent item in the model.
         @returns A list of respective QModelIndexes of the insert operation.
         """
-        parentItem = self.item(parent)
-        endIndex   = position + rows
-        nextIndex  = position
-        lastIndex  = endIndex - 1
-        items = []
-        self.beginInsertRows(parent, nextIndex, lastIndex)
+        items = [self.createItem() for i in range(position, rows)]
 
-        for i in range(nextIndex, endIndex):
-            item = self.createItem()
-            items.append(item)
-            self._itemInsertPosition(parentItem, item, i)
-
-        self.endInsertRows()
-        return [self.itemIndex(item) for item in items]
+        command = InsertItemCommand(self, position, items, parent)
+        return self.executeCommand(command)
 
     def removeRows(self, position, rows, parent=QtCore.QModelIndex()):
+        """
+        Removes a sequence of AbstractDataTreeItem instances from the model.
 
-        parentItem = self.item(parent)
-        endIndex   = position + rows
-        nextIndex  = position
-        lastIndex  = endIndex - 1
-
-        self.beginRemoveRows(parent, nextIndex, lastIndex)
-
-        for i in sorted(range(nextIndex, endIndex), reverse=True):
-            self._itemRemovePosition(parentItem, i)
-
-        self.endRemoveRows()
-        return True
+        @param position    The starting row in the model for the first item.
+        @param rows        The number of items to remove.
+        @param parentIndex The index of the parent item in the model.
+        @returns           True if removal was succesful; False otherwise.
+        """
+        command = RemoveItemCommand(self, position, rows, parent)
+        return self.executeCommand(command)
 
     def clear(self):
         """
@@ -1240,6 +1306,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         }
         self._items = []
         self._flags = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        self._undostack = None
 
     def _dataChanging(self, topLeft, bottomRight=None):
         """
@@ -1301,6 +1368,7 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
             self._itemDisconnect(item)
         except IndexError:
             pass
+        return item
 
     def _itemConnect(self, item):
         """
@@ -1344,6 +1412,32 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         return AbstractDataItem(*args)
 
+    def createSetDataCommand(self, item, index, value, role):
+        """
+        Generates a new instance of the internal SetDataCommand given the arguments.
+
+        @param item  The instance of the AbstractDataItem containing the data.
+        @param index The index of the AbstractDataItem within the parent model.
+        @param value The new value of the AbstractDataItem's data.
+        @param role  The role of the AbstractDataItem's data.
+        @returns     An instantiated AbstractSetDataCommand if succesful; None otherwise.
+        """
+        oldvalue = self.data(index, role)        
+        return AbstractSetDataCommand(item, index.column(), value, oldvalue, role) if oldvalue != value else None
+
+    def executeCommand(self, command):
+        """
+        Executes a command.
+
+        @param command  The instance of an QUndoCommand object.
+        @returns        The result from command execution if succesful; None otherwise.
+        """
+        if self._undostack:
+            self._undostack.push(command)
+        else:
+            command.redo()
+        return command.result()
+
     def columnCount(self, parent = QtCore.QModelIndex()):
         """
         Returns the number of columns in this model.
@@ -1355,6 +1449,18 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         Returns the length of the item list.
         """
         return len(self._items)
+
+    def undoModel(self):
+        """
+        Returns the undo stack being used by this model.
+        """
+        return self._undostack
+
+    def setUndoModel(self, model):
+        """
+        Sets the undo stack being used by this model.
+        """
+        self._undostack = model
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """
@@ -1368,7 +1474,11 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         Sets the model data at a given index, filtered by the given role to the value.
         """
         item = self.item(index)
-        return item.setData(index.column(), value, role) if item else False
+        if not item:
+            return False
+
+        command = self.createSetDataCommand(item, index, value, role)
+        return self.executeCommand(command)
 
     def flags(self, index):
         """
@@ -1482,12 +1592,8 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
 
         @returns The QModelIndex of the insert operation.
         """
-        self.beginInsertRows(QtCore.QModelIndex(), len(self._items), len(self._items))
-
-        self._itemInsert(item)
-
-        self.endInsertRows()
-        return self.itemIndex(item)
+        command = InsertItemCommand(self, len(self._items), [item], QtCore.QModelIndex())
+        return self.executeCommand(command)
 
     def removeItem(self, item):
         """
@@ -1503,23 +1609,14 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         return self.removeRows(index.row())
 
-    def insertRows(self, position, rows=1, index=QtCore.QModelIndex()):
+    def insertRows(self, position, rows=1, parent=QtCore.QModelIndex()):
         """
         Insert a rows with an empty DataItems into the model.
         """
-        endIndex  = position + rows
-        nextIndex = position
-        lastIndex = endIndex - 1
-        items = []
-        self.beginInsertRows(QtCore.QModelIndex(), nextIndex, lastIndex)
+        items = [self.createItem() for i in range(position, rows)]
 
-        for i in range(nextIndex, endIndex):
-            item = self.createItem()
-            items.append(item)
-            self._itemInsertPosition(item, i)
-
-        self.endInsertRows()
-        return [self.itemIndex(item) for item in items]
+        command = InsertItemCommand(self, position, items, parent)
+        return self.executeCommand(command)
 
     def removeRows(self, position, rows=1, index=QtCore.QModelIndex()):
         """
@@ -1551,29 +1648,191 @@ class AbstractDataTableModel(QtCore.QAbstractTableModel):
         """
         raise NotImplementedError()
 
-class AbstractDataChangeValueCommand(QtGui.QUndoCommand):
+class AbstractSetDataCommand(QtGui.QUndoCommand):
 
-    def __init__(self, index, value, model, text=None, parent=None):
-        super(ChangeValueCommand, self).__init__(text, parent)
+    def __init__(self, item, column, newvalue, oldvalue, role, text=None, parent=None):
+        super(AbstractSetDataCommand, self).__init__(text, parent)
 
-        self._model = model
-
-        self._row = index.row()
-        self._col = index.column()
-        self._oldvalue = index.data(QtCore.Qt.DisplayRole)
-        self._newvalue = value
-
+        self._item = item
+        self._column = column
+        self._role = role
+        self._newvalue = newvalue
+        self._oldvalue = oldvalue
+        self._result = []
         if not text:
-            self.setText("({0},{1}) => [{2}] to [{3}]".format(self._row, self._col, self._oldvalue, self._newvalue))
+            roleLabel = next((n for n, r in QtCore.Qt.ItemDataRole.values.items() if r == role), "<Unknown>")
+            self.setText("Data[{0},{1}] = {2} (Role: {3})".format(self._index.row(), self._index.column(), str(self._value), roleLabel))
 
     def redo(self):
-        super(ChangeValueCommand, self).redo()
-        index = self._model.index(self._row, self._col)
-        item  = self._model.item(index)
-        item.setData(self._col, self._newvalue, QtCore.Qt.EditRole)
+        super(AbstractSetDataCommand, self).redo()
+        result = self._item.setData(self._column, self._newvalue, self._role)
+        self._result.append(result)
 
     def undo(self):
-        super(ChangeValueCommand, self).undo()
-        index = self._model.index(self._row, self._col)
-        item  = self._model.item(index)
-        item.setData(self._col, self._oldvalue, QtCore.Qt.EditRole)
+        super(AbstractSetDataCommand, self).undo()
+        self._item.setData(self._column, self._oldvalue, self._role)
+        self._result.pop()
+    
+    def result(self):
+        return self._result[-1] if self._result else None
+
+
+class InsertItemCommand(QtGui.QUndoCommand):
+    """
+    The InsertItemCommand class implements a command to insert a sequence of item into an abstract model.
+    """
+
+    def __init__(self, model, position, items, parentIndex=QtCore.QModelIndex(), text=None, parent=None):
+        """
+        Constructor.
+
+        @param model       The model.
+        @param position    The starting row in the model for the first item.
+        @param items       The item to insert.
+        @param parentIndex The index of the parent item in the model.
+        @param text        The QUndoCommand display text.
+        @param parent      The QObject parent of the QUndoCommand
+        """
+        super(InsertItemCommand, self).__init__(text, parent)
+
+        self._items = items
+        self._position = position
+        self._parentItem = model.item(parentIndex)
+        self._model = model
+        self._result = []
+        if not text:
+            self.setText("Inserted {0}".format(",".join([str(i) for i in items])))
+                
+    def redo(self):        
+        """
+        Executes the apply action of the command.
+        """
+        super(InsertItemCommand, self).redo()
+        parent     = self._model.itemIndex(self._parentItem)
+        endIndex   = self._position + len(self._items)
+        nextIndex  = self._position
+        lastIndex  = endIndex - 1
+
+        if self._parentItem:
+            fn = lambda item, index: self._model._itemInsertPosition(self._parentItem, item, nextIndex + index)
+        else:
+            fn = lambda item, index: self._model._itemInsertPosition(item, nextIndex + index)
+
+        self._model.beginInsertRows(parent, nextIndex, lastIndex)
+        for i, item in enumerate(self._items):
+            fn(item, i)
+        self._model.endInsertRows()
+        
+        self._result.append( [self._model.itemIndex(item) for item in self._items] )
+
+    def undo(self):
+        """
+        Executes the cancel action of the command.
+        """
+        super(InsertItemCommand, self).undo()
+        
+        parent     = self._model.itemIndex(self._parentItem)
+        endIndex   = self._position + len(self._items)
+        nextIndex  = self._position
+        lastIndex  = endIndex - 1
+
+        if self._parentItem:
+            fn = lambda index: self._model._itemRemovePosition(self._parentItem, nextIndex + index)
+        else:
+            fn = lambda index: self._model._itemRemovePosition(nextIndex + index)
+
+        self._model.beginRemoveRows(parent, nextIndex, lastIndex)
+        for i in sorted(range(nextIndex, endIndex), reverse=True):
+            fn(i)
+        self._model.endRemoveRows()
+
+        self._result.pop()
+
+    def result(self):
+        """
+        Returns the result of the last redo execution.
+
+        @returns The value returned from the last redot execution if applicable; None otherwise.
+        """
+        return self._result[-1] if self._result else None
+
+class RemoveItemCommand(QtGui.QUndoCommand):
+    """
+    The RemoveItemCommand class implements a command to remove a sequence of items from an abstract model.
+    """
+
+    def __init__(self, model, position, itemCount, parentIndex=QtCore.QModelIndex(), text=None, parent=None):
+        """
+        Constructor
+
+        @param model       The model.
+        @param position    The starting row in the model for the first item.
+        @param itemCount   The number of items to remove.
+        @param parentIndex The index of the parent item in the model.
+        @param text        The QUndoCommand display text.
+        @param parent      The QObject parent of the QUndoCommand
+        """
+        super(RemoveItemCommand, self).__init__(text, parent)
+
+        indexes = [model.index(i, 0, parentIndex) for i in range(position, position+itemCount)]
+        self._items = [model.item(i) for i in indexes]
+        self._parentItem = model.item(parentIndex)
+        self._position = position
+        self._model = model
+        self._result = []
+        if not text:
+            self.setText("Removed {0}".format(",".join([str(i) for i in self._items])))
+
+    def redo(self):
+        """
+        Executes the apply action of the command.
+        """
+        super(RemoveItemCommand, self).redo()
+        
+        parent     = self._model.itemIndex(self._parentItem)
+        endIndex   = self._position + len(self._items)
+        nextIndex  = self._position
+        lastIndex  = endIndex - 1
+
+        if self._parentItem:
+            fn = lambda index: self._model._itemRemovePosition(self._parentItem, nextIndex + index)
+        else:
+            fn = lambda index: self._model._itemRemovePosition(nextIndex + index)
+
+        self._model.beginRemoveRows(parent, nextIndex, lastIndex)
+        for i in sorted(range(nextIndex, endIndex), reverse=True):
+            fn(i)
+        self._model.endRemoveRows()
+
+        self._result.append( True )
+
+    def undo(self):
+        """
+        Executes the cancel action of the command.
+        """
+        super(RemoveItemCommand, self).undo()
+
+        parent     = self._model.itemIndex(self._parentItem)
+        endIndex   = self._position + len(self._items)
+        nextIndex  = self._position
+        lastIndex  = endIndex - 1
+
+        if self._parentItem:
+            fn = lambda item, index: self._model._itemInsertPosition(self._parentItem, item, nextIndex + index)
+        else:
+            fn = lambda item, index: self._model._itemInsertPosition(item, nextIndex + index)
+
+        self._model.beginInsertRows(parent, nextIndex, lastIndex)
+        for i, item in enumerate(self._items):
+            fn(item, i)
+        self._model.endInsertRows()
+
+        self._result.pop()
+
+    def result(self):
+        """
+        Returns the result of the last redo execution.
+
+        @returns The value returned from the last redot execution if applicable; None otherwise.
+        """
+        return self._result[-1] if self._result else None

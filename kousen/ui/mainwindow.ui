@@ -53,8 +53,17 @@
     </property>
     <addaction name="actionViewSceneExplorer"/>
     <addaction name="actionViewPropertyEditor"/>
+    <addaction name="actionViewCommandHistory"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionEditUndo"/>
+    <addaction name="actionEditRedo"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -84,6 +93,15 @@
    </attribute>
    <widget class="FilteredTree" name="propertyEditor"/>
   </widget>
+  <widget class="QDockWidget" name="dockCommandHistory">
+   <property name="windowTitle">
+    <string>Command History</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QUndoView" name="commandHistory"/>
+  </widget>
   <action name="actionNewScene">
    <property name="icon">
     <iconset resource="../../resources/resources.qrc">
@@ -91,6 +109,9 @@
    </property>
    <property name="text">
     <string>New Scene</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionExit">
@@ -189,6 +210,54 @@
     <string>Shows or hides the Property Editor tool window.</string>
    </property>
   </action>
+  <action name="actionEditUndo">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo the last executed action.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionEditRedo">
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/edit-redo.png</normaloff>:/icons/edit-redo.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo the last executed action.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionViewCommandHistory">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../resources/resources.qrc">
+     <normaloff>:/icons/history.png</normaloff>:/icons/history.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Command History</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles the Command History window.</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows or hides the Command History window.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -201,6 +270,12 @@
    <class>FilteredTree</class>
    <extends>QWidget</extends>
    <header>ui.filteredview</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QUndoView</class>
+   <extends>QWidget</extends>
+   <header>PySide.QtGui</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -253,6 +328,22 @@
     <hint type="destinationlabel">
      <x>789</x>
      <y>300</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionViewCommandHistory</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dockCommandHistory</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>820</x>
+     <y>560</y>
     </hint>
    </hints>
   </connection>

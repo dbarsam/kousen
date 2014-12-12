@@ -11,4 +11,4 @@ from kousen.core.exception import ExceptionMessage
 from kousen.core.proxymodel import ColumnFilterProxyModel
 from kousen.core.proxymodel import ColumnFilterDataProxyModel
 from kousen.core.proxymodel import TreeColumnFilterProxyModel
-from kousen.core.proxymodel import UndoRedoProxyModel
+from kousen.core.undomodel import UndoRedoProxyModel
