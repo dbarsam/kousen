@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/">
+    <file>icons/history.png</file>
+    <file>icons/edit-redo.png</file>
+    <file>icons/edit-undo.png</file>
     <file>icons/scene-hierarchy.png</file>
     <file>icons/chevron-down.png</file>
     <file>icons/chevron-left.png</file>
