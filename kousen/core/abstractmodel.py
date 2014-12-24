@@ -1180,14 +1180,22 @@ class AbstractDataTreeModel(QtCore.QAbstractItemModel):
         """
         Returns the internal data item given the index
 
-        @param index the QModelIndex representing the item
-        @returns the respective item if the index is valid; the root item otherwise
+        @param index The QModelIndex representing the item.
+        @returns     The respective item if the index is valid; the root item otherwise
         """
         if index.isValid():
             item = index.internalPointer()
             if item:
                 return item
 
+        return self._root
+
+    def root(self):
+        """
+        Returns the root item of the model.
+
+        @returns     The root item if valid; none otherwise.
+        """
         return self._root
 
     def itemIndex(self, item):
