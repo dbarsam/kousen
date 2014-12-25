@@ -1745,9 +1745,9 @@ class InsertItemCommand(QtGui.QUndoCommand):
         lastIndex  = endIndex - 1
 
         if self._parentItem:
-            fn = lambda index: self._model._itemRemovePosition(self._parentItem, nextIndex + index)
+            fn = lambda index: self._model._itemRemovePosition(self._parentItem, index)
         else:
-            fn = lambda index: self._model._itemRemovePosition(nextIndex + index)
+            fn = lambda index: self._model._itemRemovePosition(index)
 
         self._model.beginRemoveRows(parent, nextIndex, lastIndex)
         for i in sorted(range(nextIndex, endIndex), reverse=True):
@@ -1803,9 +1803,9 @@ class RemoveItemCommand(QtGui.QUndoCommand):
         lastIndex  = endIndex - 1
 
         if self._parentItem:
-            fn = lambda index: self._model._itemRemovePosition(self._parentItem, nextIndex + index)
+            fn = lambda index: self._model._itemRemovePosition(self._parentItem, index)
         else:
-            fn = lambda index: self._model._itemRemovePosition(nextIndex + index)
+            fn = lambda index: self._model._itemRemovePosition(index)
 
         self._model.beginRemoveRows(parent, nextIndex, lastIndex)
         for i in sorted(range(nextIndex, endIndex), reverse=True):
