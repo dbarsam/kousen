@@ -11,7 +11,7 @@ class CameraHUDNode(ViewportNode):
     __icon__         = ":/icons/hud-camera.png"
     __instantiable__ = True
 
-    def __init__(self, camera, parent):
+    def __init__(self, camera=None, parent=None):
         """
         Constructor.
 
@@ -19,7 +19,6 @@ class CameraHUDNode(ViewportNode):
         @param parent   The parent AbstractSceneGraphItem instance.
         """
         super(CameraHUDNode, self).__init__("CameraHUD", parent)
-        self._transform = Matrix4x4()
         self._camera = camera
 
     @property
