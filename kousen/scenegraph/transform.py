@@ -446,20 +446,8 @@ class TransformationNode(SceneGraphNode):
         """
         super(TransformationNode, self).__init__(name, parent)
         self.__transformation = AffineTransformation()
-        self.__transformation.dataChanging.connect(self._dataChanging)
-        self.__transformation.dataChanged.connect(self._dataChanged)
-
-    def _dataChanging(self):
-        """
-        Internal method to emit the dataChanging signal.
-        """
-        self.dataChanging.emit(self.Fields.NAME, QtCore.Qt.DisplayRole)
-
-    def _dataChanged(self):
-        """
-        Internal method to emit the dataChanged signal.
-        """
-        self.dataChanged.emit(self.Fields.NAME, QtCore.Qt.DisplayRole)
+        self.__transformation.dataChanging.connect(lambda: self._dataChanging(self.Fields.NAME, QtCore.Qt.DisplayRole))
+        self.__transformation.dataChanged.connect(lambda: self._dataChanged(self.Fields.NAME, QtCore.Qt.DisplayRole))
 
     @property
     def translation(self):
