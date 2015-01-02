@@ -1,26 +1,68 @@
 from OpenGL import GL
 from OpenGL import GLU
+from PySide import QtCore
+from PySide import QtGui
 
-class GLUQuadricScope(object):
+class Scope(object):
+    """
+    Scope provides a context manager base interface for various OpenGL operations.
+    """
+    def __init__(self):
+        super(Scope, self).__init__()
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, type, value, traceback):
+        return type
+
+    def push(self):
+        self.__enter__()
+
+    def pop(self):
+        self.__exit__(None, None, None)
+
+class CompoundScope(Scope):
+    """
+    CompoundScope provides a context manager for a sequence of Scope objects.
+    """
+    def __init__(self, *args):
+        super(Scope, self).__init__()
+        self.__args = args
+ 
+    def __enter__(self):
+        for item in self.__args:
+            item.__enter__()
+ 
+    def __exit__(self, type, value, traceback):
+        for item in reversed(self.args):
+            item.__exit__(type, value, traceback)
+        return type
+
+class GLUQuadricScope(Scope):
     """
     GLUQuadricScope provides a context manager for a GLU.Quadric operations
     """
     def __init__(self):
-        pass
+        super(GLUQuadricScope, self).__init__()
+        self._quadric = None
 
     def __enter__(self):
-        self._quadric = quadric = GLU.gluNewQuadric()
+        if not self._quadric:
+            self._quadric = GLU.gluNewQuadric()
 
     def __exit__(self ,type, value, traceback):
         if self._quadric:
             GLU.gluDeleteQuadric(_quadric);
+            self._quadric = None
         return not type
 
-class GLAttribScope(object):
+class GLAttribScope(Scope):
     """
     GLAttribScope provides a context manager for an OpenGL Attribute operations (i.e. GL.glPushAttrib / GL.glPopAttrib)
     """
     def __init__(self, mask):
+        super(GLAttribScope, self).__init__()
         self._mask = mask
 
     def __enter__(self):
@@ -30,11 +72,12 @@ class GLAttribScope(object):
         GL.glPopAttrib()
         return not type
 
-class GLClientAttribScope(object):
+class GLClientAttribScope(Scope):
     """
     GLClientAttribScope provides a context manager for an OpenGL Client Attribute operations (i.e. GL.glPushClientAttrib / GL.glPushClientAttrib)
     """
     def __init__(self, mask):
+        super(GLClientAttribScope, self).__init__()
         self._mask = mask
 
     def __enter__(self):
@@ -44,11 +87,12 @@ class GLClientAttribScope(object):
         GL.glPopClientAttrib()
         return not type
 
-class GLMatrixScope(object):
+class GLMatrixScope(Scope):
     """
     GLClientAttribScope provides a context manager for an OpenGL Matrix Stack operations (i.e. GL.glPushMatrix / GL.glPopMatrix)
     """
     def __init__(self, matrixmode=None, identity=False):
+        super(GLMatrixScope, self).__init__()
         self._nextmode = matrixmode
         self._identity = identity
 
@@ -66,7 +110,7 @@ class GLMatrixScope(object):
             GL.glMatrixMode(self._prevmode)
         return not type
 
-class GLVariableScope(object):
+class GLVariableScope(Scope):
     """
     GLVariableScope provides a context manager for an OpenGL variable operations
 
@@ -74,6 +118,7 @@ class GLVariableScope(object):
         ...
     """
     def __init__(self, glmethod, glid, value):
+        super(GLVariableScope, self).__init__()
         self._prevvalue = None
         self._nextvalue = value
         self._set = glmethod
@@ -87,7 +132,7 @@ class GLVariableScope(object):
         self._set(self._prevvalue)
         return not type
 
-class GLScope(object):
+class GLScope(Scope):
     """
     GLScope provides a context manager for an OpenGL operations (GL.glBegin / GL.glEnd)
 
@@ -95,6 +140,7 @@ class GLScope(object):
         ...
     """
     def __init__(self, mode):
+        super(GLScope, self).__init__()
         self._mode = mode
 
     def __enter__(self):
