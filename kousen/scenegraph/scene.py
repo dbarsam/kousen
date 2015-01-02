@@ -39,13 +39,22 @@ class AbstractSceneGraphItem(AbstractDataTreeItem):
         Calculates all derived subclasses.
 
         @param   recursive True if the subclass search should recusively delve into the inheritance tree.
-        @returns           A list of SceneraphItem-derived class type.
+        @returns           A list of AbstractSceneGraphItem-derived class type.
         """
         sb = cls.__subclasses__()
         if recursive:
             for c in cls.__subclasses__():
                 sb.extend(c.subclasses())
         return sb
+
+    @classmethod
+    def baseclasses(cls):
+        """
+        Calculates all base classes.
+
+        @returns           A list of base classes.
+        """
+        return cls.mro()
 
     @classmethod
     def instantiable(cls):
@@ -130,6 +139,25 @@ class SceneGraphRoot(AbstractSceneGraphItem):
         """
         super(SceneGraphRoot, self).__init__(sdata, None)
         self._internal = sdata
+        self._camera = None
+
+    @property
+    def camera(self):
+        """
+        Convenience property to access the Root's Camera reference, the Scene Graph Model's Active Camera
+
+        @returns A Camera Node if valid; None otherwise.
+        """
+        return self._camera
+
+    @camera.setter
+    def camera(self, value):
+        """
+        Convenience property to access the Root's Camera reference, the Scene Graph Model's Active Camera
+
+        @param value An instance of a Camera Node.
+        """
+        self._camera = value
 
 class AbstractSceneGraphModel(AbstractDataTreeModel):
     """
@@ -145,7 +173,6 @@ class AbstractSceneGraphModel(AbstractDataTreeModel):
         @param parent     The initial parent AbstractDataTreeItem of this AbstractDataTreeItem
         """
         super(AbstractSceneGraphModel, self).__init__(AbstractSceneGraphItem.Fields.headerdata(), parent)
-        self._camera = None
 
     @property
     def activeCamera(self):
@@ -154,7 +181,7 @@ class AbstractSceneGraphModel(AbstractDataTreeModel):
 
         @returns A Camera Node if valid; None otherwise.
         """
-        return self._camera
+        return self.root().camera
 
     @activeCamera.setter
     def activeCamera(self, value):
@@ -163,7 +190,7 @@ class AbstractSceneGraphModel(AbstractDataTreeModel):
 
         @param value An instance of a Camera Node.
         """
-        self._camera = value
+        self.root().camera = value
 
     def createRoot(self, *args):
         """
@@ -191,6 +218,70 @@ class AbstractSceneGraphModel(AbstractDataTreeModel):
         @returns           A list of AbstractSceneGraphItem that succesfully evaluate the condition.
         """
         return self._root.filter(condition)
+
+class AbstractSceneGraphVisitor(object):
+    """
+    SceneGraphVisitor provides an interface to a Scene Graph Traversal object.
+    """
+    def __init__(self):
+        super(AbstractSceneGraphVisitor, self).__init__()
+
+    def _istraversable(self, node):
+        """
+        Determines in the node is traversable in the traversal operation.
+
+        @param node The current node in the traversal operation.
+        @return     True if the node is traversable; False otherwise.
+        """
+        return True
+
+    def _enter(self, node):
+        """
+        The internal pre-traversal node processing operation.
+
+        @param node The current node in the traversal operation.
+        """
+        return True
+
+    def _exit(self, node):
+        """
+        The internal post-traversal node processing operation.
+
+        @param node The current node in the traversal operation.
+        """
+        pass
+
+    def _next(self, node):
+        """
+        Calculates the next nodes in the traversal operation regardless of traversability.
+
+        @param node The current node in the traversal operation.
+        @return List of new nodes to visit.
+        """
+        return node.children() if node else []
+
+    def _traverse(self, node):
+        """
+        The internal node traversal operation.
+
+        @param node The current node in the traversal
+        """
+        if not self._istraversable(node):
+            return
+
+        self._enter(node)
+        for next in self._next(node):
+            self._traverse(next)
+        self._exit(node)
+
+    def traverse(self, model):
+        """
+        Traverses the model.
+
+        @param model An instance of AbstractSceneGraphModel.
+        """
+        root = model.root()
+        self._traverse(root)
 
 class SceneGraphType(AbstractDataTreeItem):
     """
@@ -276,5 +367,3 @@ class SceneGraphTypeTreeModel(AbstractDataTreeModel):
                 self.appendItem(subitem, parentIndex)
 
         self.endResetModel()
-
-

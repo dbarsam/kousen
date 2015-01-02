@@ -1,71 +1,34 @@
 # -*- coding: utf-8 -*-
-from PySide import QtCore, QtGui
 from OpenGL import GL
-from OpenGL import GLU
-from kousen.math import Matrix4x4
-from kousen.gl.glscene import GLNode
-from kousen.scenegraph.transform import TransformationNode
+from kousen.scenegraph import TransformationNode
+from kousen.gl.gladapter import GLNodeAdapter
 
-class GLTransformationNode(GLNode, TransformationNode):
+class GLTransformationNode(GLNodeAdapter):
     """
-    The GLTransformationNode extends TransformationNode with the functionality of GLNode.
+    The GLTransformationNode implements a GLNodeAdapter for a TransformationNode.
     """
     # Additional Meta Information
-    __category__     = "OpenGL Transformation Node"
-    __description__  = "Transformation Node"
-    __instantiable__ = True
+    __node__ = TransformationNode
 
-    def __init__(self, name, parent=None):
+    def __init__(self, node):
         """
         Constructor.
 
-        @param sdata   The initial instance of AbstractData or iterable object containing static data to be converted to an instance of AbstractData.
-        @param parent  The initial parent GLSceneNode of this GLTransformationNode
+        @param node The node we are adapting.
         """
-        super(GLTransformationNode, self).__init__(name, parent)
+        super(GLTransformationNode, self).__init__(node)
 
-    def _prepaintGL(self):
+    def paint_enter(self):
         """
-        Internal OpenGL Render operation.  Execute any logic required before the Draw callback.
+        Implements the GLNodeAdapter's paint_enter method for an OpenGL Render operation.
         """
-        super(GLPrimitiveNode, self)._prepaintGL()
-
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glPushMatrix();
+        GL.glMultMatrixf(self._node.matrix().data())        
 
-        GL.glMultMatrixf(self.matrix().data())
-
-    def _postpaintGL(self):
+    def paint_exit(self):
         """
-        Internal OpenGL Render operation.  Execute any logic required after the Draw callback.
+        Implements the GLNodeAdapter's paint_exit method for an OpenGL Render operation.
         """
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glPopMatrix();
-
-        super(GLPrimitiveNode, self)._postpaintGL()
-
-#class GLTransformationNode(GLNode, SceneGraphNode):
-#    """
-#    The GLTransformationNode provide a base interface of OpenGL Scene Graph Transformation Node.
-#    """
-#    def __init__(self, *args, **kargs):
-#        """
-#        Constructor.
-
-#        @param args    The list of arguments to be passed along the constructor initialization chain.
-#        @param kargs   The list of key-word arguments to be passed along the constructor initialization chain.
-#        """
-#        super(GLTransformationNode, self).__init__(*args, **kwargs)
-
-#    def paintGL(self):
-#        """
-#        OpenGL Render operation.  Executes logic during an OpenGL context render paint operation.
-#        """
-#        GL.glPushMatrix()
-#        GL.glMultMatrixf(self._matrix.data())
-
-#        super(GLTransformationNode, self).paintGL()
-
-#        GL.glPopMatrix()
-
-

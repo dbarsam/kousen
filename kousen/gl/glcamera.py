@@ -1,55 +1,47 @@
 # -*- coding: utf-8 -*-
-import math
-from PySide import QtGui, QtCore
 from OpenGL import GL
-from kousen.gl.glscene import GLNode
+from OpenGL import GLU
+from OpenGL import GLUT
 from kousen.scenegraph import CameraNode
-from kousen.math import Matrix4x4
-from kousen.math.conic import coniclength, conicwidth
+from kousen.gl.gladapter import GLNodeAdapter
+from kousen.math import Vector3D, Point3D, Matrix4x4
+from kousen.gl.glutil import GLUQuadricScope, GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 
-class GLCameraNode(GLNode, CameraNode):
+class GLCameraNode(GLNodeAdapter):
     """
-    The GL Camera Node provides an OpenGL implementation of a CameraNode.
+    The GLCameraNode implements a GLNodeAdapter for a CameraNode.
     """
     # Additional Meta Information
-    __category__     = "OpenGL Camera Node"
-    __description__  = "Perspective Camera Node"
-    __instantiable__ = True
+    __node__ = CameraNode
 
-    def __init__(self, position=None, target=None, up=None, fov=None, znear=None, zfar=None, swidth=None, sheight=None, parent=None):
+    def __init__(self, node):
         """
         Constructor.
 
-        @param position The position of the camera (in world space). If None, it will default to CameraNode.__camera_target__.
-        @param target   The camera target point (in world space).  If None, it will default to CameraNode.__camera_position__.
-        @param up       The camera up point (in world space). If None, it will default to CameraNode.__camera_upvector__.
-        @param fov      The field of view (in degrees). If None, it will default to CameraNode.__camera_fov__.
-        @param znear    The distance from position to the near clipping plane. If None, it will default to CameraNode.__camera_znear__.
-        @param zfar     The distance from position to the far clipping plane. If None, it will default to CameraNode.__camera_zfar__.
-        @param swidth   The initial screen width (in pixels). If None, it will default to CameraNode.__camera_swidth__.
-        @param sheight  The initial screen height (in pixels). If None, it will default to CameraNode.__camera_sheight__.
-        @param parent   The parent AbstractSceneGraphItem instance.
+        @param node The node we are adapting.
         """
-        super(GLCameraNode, self).__init__(position, target, up, fov, znear, zfar, swidth, sheight, parent)
+        super(GLCameraNode, self).__init__(node)
 
-    def resizeGL(self, width, height):
+    def resize_enter(self, width, height):
         """
-        OpenGL Resize operation. Executes OpenGL logic during a resize callback.
+        Implements the GLNodeAdapter's resize_enter method for an OpenGL Resize operation.
 
         @param width The current width of the viewport.
         @param height The current height of the viewport.
         """
-        GLNode.resizeGL(self, width, height)
+        self._node.resize(width, height)
 
-        self.resize(width, height)
-
-    def projectionGL(self):
+    def paint_enter(self):
         """
-        OpenGL Viewport Projection operation. Execute any logic required to required by the Projection Matrix.
+        Implements the GLNodeAdapter's paint_enter method for an OpenGL Render operation.
         """
-        GLNode.projectionGL(self)
+        viewport = self._node.viewport
+        znear = self._node.znear
+        zfar = self._node.zfar
+        matrix = self._node.projectionMatrix()            
 
-        GL.glFrustum(self._viewport[0], self._viewport[1], self._viewport[2], self._viewport[3], self._znear, self._zfar)
+        GL.glMatrixMode(GL.GL_PROJECTION)
+        GL.glLoadIdentity()
+        GL.glFrustum(viewport[0], viewport[1], viewport[2], viewport[3], znear, zfar)
+        GL.glMultMatrixf(matrix.data())
 
-        self.transformation = Matrix4x4.lookAt(self._position, self._target, self._up, False)
-        GL.glMultMatrixf(self.transformation.data())

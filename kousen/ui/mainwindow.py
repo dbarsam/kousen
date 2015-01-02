@@ -5,11 +5,7 @@ from PySide import QtGui, QtCore
 from kousen.math import Point3D
 from kousen.core.propertymodel import PropertyItem, PropertyModel
 from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel
-from kousen.gl.glscene import GLSceneNode, GLSceneModel
-from kousen.gl.glcamera import *
-from kousen.gl.glhud import *
-from kousen.gl.glprimitive import *
-from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
+from kousen.scenegraph import AbstractSceneGraphModel, CameraNode, CameraHUDNode, CubeNode, CylinderNode, ConeNode, GridNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, QuadricArrowNode
 from kousen.ui.itemdialog import ItemCreationDialog
 from kousen.ui.uiloader import UiLoader
 from kousen.ui.editorfactory import ItemEditorFactoryDelegate
@@ -87,7 +83,7 @@ class MainWindow(__form_class__, __base_class__):
         Debug Function to quickly create a scene
         """
         self.actionNewScene.trigger()
-        self._nodeInsert([ColorCubeObject()])
+        self._nodeInsert([CubeNode()])
 
     def _editAboutToShow(self):
         """
@@ -141,7 +137,7 @@ class MainWindow(__form_class__, __base_class__):
             self._sceneGraph.dataChanged.disconnect(self._sceneDataChanged)
             self._sceneGraph.rowsInserted.disconnect(self._sceneRowsInserted)
             self._sceneGraph.rowsRemoved.disconnect(self._sceneRowsRemoved)
-        self._sceneGraph = GLSceneModel(self)
+        self._sceneGraph = AbstractSceneGraphModel(self)
         self._sceneGraph.setUndoModel(self._undoStack)
         self._sceneGraph.dataChanged.connect(self._sceneDataChanged)
         self._sceneGraph.rowsInserted.connect(self._sceneRowsInserted)
@@ -156,8 +152,8 @@ class MainWindow(__form_class__, __base_class__):
         self.glwidget.setModel(self._sceneGraph)
 
         with UndoMacro(self._undoStack, "New Scene"):
-            camera = GLCameraNode()
-            self._nodeInsert([camera, GLCameraHUDNode(camera), GridObject(16, 1)], False)
+            camera = CameraNode()
+            self._nodeInsert([camera, CameraHUDNode(camera), GridNode(1,16)], False)
             self._cameraActivate(camera)
 
     def _nodeInsert(self, nodes=[], autoselect=True):
@@ -202,6 +198,7 @@ class MainWindow(__form_class__, __base_class__):
         """
         if not node:
             node = next( (n for n in self.sceneExplorer.selectedItems if type(n) is GLCameraNode), None)
+
         if node:
             self.sceneExplorer.source.activeCamera = node
             #for hud in [n for n in nodes if type(n) is CameraHUDNode]:

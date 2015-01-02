@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from kousen.math import Matrix4x4
 from kousen.scenegraph import ViewportNode
+from kousen.scenegraph.quadric import QuadricGnomonNode
 
 class CameraHUDNode(ViewportNode):
     """
@@ -20,6 +21,8 @@ class CameraHUDNode(ViewportNode):
         """
         super(CameraHUDNode, self).__init__("CameraHUD", parent)
         self._camera = camera
+        self._gnomon = QuadricGnomonNode(0.4, 0.005, 0.05, 0.8, 32, 32, 5, self)
+        self.appendChild( self._gnomon )
 
     @property
     def camera(self):

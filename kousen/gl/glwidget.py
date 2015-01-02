@@ -1,4 +1,5 @@
 from PySide import QtCore, QtGui, QtOpenGL
+from kousen.gl.gltraversal import GLInitializeVisitor, GLResizeVisitor, GLPaintVisitor
 
 class GLWidget(QtOpenGL.QGLWidget):
     """
@@ -161,8 +162,8 @@ class GLWidget(QtOpenGL.QGLWidget):
                 pass
             if delta_y == 0:
                 pass
-            # Camera Opeeration
 
+            # Camera Operation
             if event.modifiers() & QtCore.Qt.Modifier.ALT:
                 if event.modifiers() & QtCore.Qt.Modifier.SHIFT:
                     if not self._mouselock:
@@ -219,14 +220,16 @@ class GLWidget(QtOpenGL.QGLWidget):
         Overriden method of QGLWidget to handle once before the first call to PySide.QtOpenGL.QGLWidget.paintGL() or PySide.QtOpenGL.QGLWidget.resizeGL(), and then once whenever the widget has been assigned a new PySide.QtOpenGL.QGLContext.
         """
         if self._model:
-            self._model.initializeGL()
+            visitor = GLInitializeVisitor()
+            visitor.traverse(self._model)
 
     def paintGL(self):
         """
         Overriden method of QGLWidget handle whenever the widget needs to be painted.
         """
         if self._model:
-            self._model.paintGL()
+            visitor = GLPaintVisitor()
+            visitor.traverse(self._model)
 
     def resizeGL(self, width, height):
         """
@@ -236,4 +239,5 @@ class GLWidget(QtOpenGL.QGLWidget):
         @param height the new height
         """
         if self._model:
-            self._model.resizeGL(width, height)
+            visitor = GLResizeVisitor(width, height)
+            visitor.traverse(self._model)

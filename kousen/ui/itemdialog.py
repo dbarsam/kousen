@@ -6,10 +6,10 @@ from kousen.core.abstractmodel import AbstractDataItem, AbstractData, AbstractDa
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
 from kousen.ui.uiloader import UiLoader
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
-from kousen.gl.glscene import *
 from kousen.gl.glcamera import *
 from kousen.gl.glhud import *
 from kousen.gl.glprimitive import *
+from kousen.gl.glquadric import *
 from kousen.gl.gltransform import *
 from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 

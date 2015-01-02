@@ -28,8 +28,7 @@ class CameraNode(ObjectNode):
     # from dragging the mouse across the entire width of the screen.
     __camera_max_screen_rotation__ = 180.0
 
-    def __init__(self, position=None, target=None, up=None, fov=None, znear=None, zfar=None, swidth=None, sheight=None, parent=None):
-        super(CameraNode, self).__init__("camera", parent)
+    def __init__(self, position=None, target=None, up=None, fov=None, znear=None, zfar=None, swidth=None, sheight=None, parent=None):        
         """
         Constructor.
 
@@ -43,7 +42,7 @@ class CameraNode(ObjectNode):
         @param sheight  The initial screen height (in pixels). If None, it will default to CameraNode.__camera_sheight__.
         @param parent   The parent AbstractSceneGraphItem instance.
         """
-
+        super(CameraNode, self).__init__("camera", parent)
         # Register the 'reset' data
         self._restore['_znear']        = znear or self.__camera_znear__
         self._restore['_zfar']         = zfar or self.__camera_zfar__
@@ -53,9 +52,12 @@ class CameraNode(ObjectNode):
         self._restore['_position']     = (position or self.__camera_position__).duplicate()
         self._restore['_target']       = (target or self.__camera_target__).duplicate()
         self._restore['_up']           = (up or self.__camera_upvector__).duplicate()
-        self._restore['_viewport']     = self.viewport(self._restore['_fov'], self._restore['_screenwidth'], self._restore['_screenheight'], self._restore['_znear'])
+        self._restore['_viewport']     = self._generateViewport(self._restore['_fov'], self._restore['_screenwidth'], self._restore['_screenheight'], self._restore['_znear'])
+
+        self.__projectionmatrix = None
 
         self.reset()
+        self._updateProjectionMatrix()
 
     @property
     def znear(self):
@@ -93,21 +95,17 @@ class CameraNode(ObjectNode):
     def viewport(self):
         return self._viewport;
 
-    def resize(self, width, height):
+    def _generateProjectionMatrix(self):
         """
-        Resizes the virtual screen.
-        """
-        self._viewport = self.viewport(self._fov, width, height, self._znear)
-        self._screenminsize = min(width, height)
-        self._screenwidth = width
-        self._screenheight = height
+        Generates a LookAt matrix from internal data.
 
-        self._rotationspeed = self.__camera_max_screen_rotation__ / self._screenminsize
-        self._pixelradians = math.radians(self._rotationspeed)
-
-    def viewport(self, fov, width, height, znear):
+        @returns A Matrix4x4 representation of camera's LookAt component.
         """
-        Calcaultes the Viewport dimensions.
+        return Matrix4x4.lookAt(self._position, self._target, self._up, False)
+
+    def _generateViewport(self, fov, width, height, znear):
+        """
+        Generates a viewport from the dimensions.
 
         @param fov    The Field of View angle (in degrees).
         @param width  The screen width (in pixels).
@@ -131,6 +129,32 @@ class CameraNode(ObjectNode):
         ztop    =   0.5 * znear_height
 
         return (zleft, zright, zbottom, ztop)
+
+    def _updateProjectionMatrix(self):
+        """
+        Internal method to manually update the cached transformation matrix from internal data.
+        """
+        self.__projectionmatrix = self._generateProjectionMatrix()
+
+    def projectionMatrix(self):
+        """
+        Returns the component pre-calcaulted transformation matrix.
+        
+        @returns A Matrix4x4 representation of the transformation component.
+        """
+        return self.__projectionmatrix
+
+    def resize(self, width, height):
+        """
+        Resizes the virtual screen.
+        """
+        self._viewport = self._generateViewport(self._fov, width, height, self._znear)
+        self._screenminsize = min(width, height)
+        self._screenwidth = width
+        self._screenheight = height
+
+        self._rotationspeed = self.__camera_max_screen_rotation__ / self._screenminsize
+        self._pixelradians = math.radians(self._rotationspeed)
 
     def tumble(self, hdelta, vdelta):
         """
@@ -162,6 +186,8 @@ class CameraNode(ObjectNode):
 
         # Update the camera's position
         self._position = self._target + idirection
+        
+        self._updateProjectionMatrix()
 
     def roll(self, delta):
         """
@@ -180,6 +206,8 @@ class CameraNode(ObjectNode):
         rotation = - delta * self._pixelradians
         M        = Matrix4x4.rotation( rotation, direction )
         self._up = M * self._up
+        
+        self._updateProjectionMatrix()
 
     def track( self, hdelta, vdelta ):
         """
@@ -210,6 +238,8 @@ class CameraNode(ObjectNode):
         self._position += translation
         self._target += translation
 
+        self._updateProjectionMatrix()
+
     def dolly( self, delta ):
         """
         Executes a translate operation the z-axis.
@@ -234,6 +264,8 @@ class CameraNode(ObjectNode):
         # Move the Position only; the look at point reamins unchanged.
         self._position += translation
 
+        self._updateProjectionMatrix()
+
     def zoom( self, delta ):
         """
         Executes a zoom operation.
@@ -245,4 +277,4 @@ class CameraNode(ObjectNode):
         """
         # Clamp the __camera_fov__ (in degrees) to 1 and 180
         self._fov  = sorted((1, self._fov - delta, 180))[1]
-        self._viewport = self.viewport(self._fov, self._screenwidth, self._screenheight, self._znear)
+        self._viewport = self._generateViewport(self._fov, self._screenwidth, self._screenheight, self._znear)
