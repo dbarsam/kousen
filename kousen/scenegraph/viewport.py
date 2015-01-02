@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
+import abc
 from kousen.scenegraph import SceneGraphNode
 
-class ViewportNode(SceneGraphNode):
+class VirtualScreen(object):
+
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def resize(self, width, height):
+        """
+        Resizes the virtual screen.
+
+        @param width  The width (in pixels) of the virtual screen.
+        @param height The height (in pixels) of the virtual screen.
+        """
+        raise NotImplementedError("resize has not been implemented.")
+
+class ViewportNode(SceneGraphNode, VirtualScreen):
     """
     ViewportNode provides a Viewport implementation of a SceneGraphNode.
     """

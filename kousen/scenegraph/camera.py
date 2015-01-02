@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import math
 from PySide import QtGui, QtCore
-from kousen.scenegraph import ObjectNode
+from kousen.scenegraph import ObjectNode, VirtualScreen
 from kousen.math import Point3D, Vector3D, Matrix4x4
 from kousen.math.conic import coniclength, conicwidth
 
-class CameraNode(ObjectNode):
+class CameraNode(ObjectNode, VirtualScreen):
     """
     The Camera Node provides Camera implementation of a AbstractSceneGraphItem.
     """

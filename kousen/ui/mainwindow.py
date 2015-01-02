@@ -5,7 +5,7 @@ from PySide import QtGui, QtCore
 from kousen.math import Point3D
 from kousen.core.propertymodel import PropertyItem, PropertyModel
 from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel
-from kousen.scenegraph import AbstractSceneGraphModel, CameraNode, CameraHUDNode, CubeNode, CylinderNode, ConeNode, GridNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, QuadricArrowNode
+from kousen.scenegraph import AbstractSceneGraphModel, VirtualScreen, CameraNode, CameraHUDNode, CubeNode, CylinderNode, ConeNode, GridNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, QuadricArrowNode
 from kousen.ui.itemdialog import ItemCreationDialog
 from kousen.ui.uiloader import UiLoader
 from kousen.ui.editorfactory import ItemEditorFactoryDelegate
@@ -168,9 +168,14 @@ class MainWindow(__form_class__, __base_class__):
             nodetypes = dlg.selection() if dlg.show_() else []
             nodes = [node() for node in nodetypes]
 
+        # Initialize the node's resize method to current screenwidth and height
+        for virtual_screen in [n for n in nodes if isinstance(n, VirtualScreen)]:
+            virtual_screen.resize(self.glwidget.width(), self.glwidget.height())
+
+        # Insert the node into the scene graph as children to selected nodes
         parentIndexes = self.sceneExplorer.selectedIndexes or [QtCore.QModelIndex()]
         indexes = []
-        for node in nodes:
+        for node in nodes:            
             for parentIndex in parentIndexes:
                 indexes.extend( self.sceneExplorer.source.appendItem(node, parentIndex) )
 
