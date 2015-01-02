@@ -132,6 +132,33 @@ class GLVariableScope(Scope):
         self._set(self._prevvalue)
         return not type
 
+class GLColorScope(Scope):
+    """
+    GLColorScope provides a context manager for an OpenGL glColor operations independent of the GL.GL_CURRENT_COLOR attribute.
+
+        with GLColorScope(color):
+        ...
+    """
+    def __init__(self, qcolor):
+        super(GLColorScope, self).__init__()
+        self._glcolor = None
+        self._qcolor = None
+        if isinstance(qcolor, QtGui.QColor):
+            self._qcolor = qcolor
+        elif isinstance(qcolor, QtCore.Qt.GlobalColor):
+            self._qcolor = QtGui.QColor(qcolor)
+
+    def __enter__(self):
+        if not self._glcolor and self._qcolor:
+            self._glcolor = GL.glGetFloatv(GL.GL_CURRENT_COLOR)
+            GL.glColor(self._qcolor.getRgbF())
+
+    def __exit__(self ,type, value, traceback):
+        if self._glcolor:
+            GL.glColor(self._glcolor)
+            self._glcolor = None
+        return not type
+
 class GLScope(Scope):
     """
     GLScope provides a context manager for an OpenGL operations (GL.glBegin / GL.glEnd)
@@ -149,3 +176,4 @@ class GLScope(Scope):
     def __exit__(self ,type, value, traceback):
         GL.glEnd()
         return not type
+
