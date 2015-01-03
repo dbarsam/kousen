@@ -117,7 +117,7 @@ class CylinderNode(PrimitiveNode):
     CylinderNode implements a Cylinder PrimitiveNode.
     """
     # Additional Meta Information
-    __description__  = "Cone Primitve"
+    __description__  = "Cylinder Primitive"
     __instantiable__ = True
 
     def __init__(self, radius = 1.0, length = 1, axis=Vector3D(0,1,0), parent=None):
@@ -201,7 +201,7 @@ class ArrowNode(PrimitiveNode):
     ArrowNode implements a primitive composite node.
     """
     # Additional Meta Information
-    __description__  = "Quadric Arrow Primitve"
+    __description__  = "Arrow Primitve"
     __instantiable__ = True
 
     def __init__(self, head = Point3D(0,1,0), tail = Point3D(0,0,0), cyradius = 0.005, coradius = 0.075, mid=0.80, parent=None):
