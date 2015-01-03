@@ -12,6 +12,7 @@ class CameraHUDNode(ViewportNode):
     # Additional Meta Information
     __category__     = "HUD Node"
     __icon__         = ":/icons/hud-camera.png"
+    __description__  = "Camera HUD"
     __instantiable__ = True
 
     def __init__(self, camera=None, parent=None):
