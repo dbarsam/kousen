@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides class defintions of OpenGL primitive node adapters.
+"""
 import array
-import copy
-import math
-from enum import IntEnum, unique
-from PySide import QtCore, QtGui
-from OpenGL import GL, GLU, GLUT
-#from kousen.scenegraph import PrimitiveNode
-from kousen.math import Point3D, Vector3D, Matrix4x4
-from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
+
+from OpenGL import GL
+from kousen.gl.glutil import GLScope
 from kousen.gl.gladapter import GLNodeAdapter
-from kousen.scenegraph import SphereNode, CubeNode, CylinderNode, ConeNode, PlaneNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, GridNode
-from kousen.math import Matrix4x4
+from kousen.scenegraph import CubeNode, GridNode
 
 class GLColorCubeAdapter(GLNodeAdapter):
     """

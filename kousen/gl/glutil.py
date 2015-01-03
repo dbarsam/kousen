@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+This module provides the miscellaneous utility functions required by kousen.gl.
+"""
 from OpenGL import GL
 from OpenGL import GLU
 from PySide import QtCore

@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides the base components of the scene graph.
+
+The module implements the scene graph as a specialized AbstractDataTreeModel and the various scene graph nodes as specialized AbstractDataTreeItems.
+"""
 from PySide import QtCore, QtGui
-from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
+from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataTreeItem, AbstractDataTreeModel
 
 class AbstractSceneItemData(AbstractData):
     """

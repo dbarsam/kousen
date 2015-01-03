@@ -158,7 +158,6 @@ if __name__ == "__main__":
     if not packagepath in sys.path:
         sys.path.append(packagepath)
 
-    import kousen.resources_rc
 
     app = QtGui.QApplication.instance()
     if not app: app = QtGui.QApplication([])

@@ -1,8 +1,5 @@
-import os
 import sys
-
 import PySide
-
 import pysideuic
 import xml.etree.ElementTree as xml
 from io import StringIO

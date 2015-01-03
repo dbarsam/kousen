@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for extending Qt's QSortFilterProxyModel.
+"""
 from PySide import QtGui, QtCore
 
 class ColumnFilterProxyModel(QtGui.QSortFilterProxyModel):

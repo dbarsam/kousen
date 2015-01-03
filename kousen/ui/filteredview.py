@@ -455,7 +455,7 @@ class FilteredTable(FilteredView):
 
 if __name__ == "__main__":
 
-    import sys, os, pprint
+    import os
     from core.abstractmodel import AbstractDataListModel, AbstractDataItem
     from core.abstractmodel import AbstractDataTreeModel, AbstractDataTreeItem
     from core.abstractmodel import AbstractDataTableModel

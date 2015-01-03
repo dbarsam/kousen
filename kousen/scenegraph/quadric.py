@@ -6,7 +6,6 @@ A Quadric surface is a tessellated polygon defined by a quadratic polynomial.  S
 """
 from PySide import QtCore, QtGui
 from kousen.scenegraph.primitive import (
-    PrimitiveNode,
     SphereNode,
     CylinderNode,
     ConeNode,
@@ -15,8 +14,7 @@ from kousen.scenegraph.primitive import (
 )
 from kousen.math import (
     Point3D, 
-    Vector3D,
-    Matrix4x4
+    Vector3D
 )
 
 class QuadricSphereNode(SphereNode):

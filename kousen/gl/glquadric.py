@@ -1,24 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-This module provides an openal quadric specializations of primitive node adapters.
+This module provides class defintions of OpenGL quadric node adapters.
 """
-import array
-import copy
 import math
-from enum import IntEnum, unique
-from PySide import QtCore, QtGui
+from PySide import QtCore
 from OpenGL import GL, GLU, GLUT
-#from kousen.scenegraph import PrimitiveNode
-from kousen.math import Point3D, Vector3D, Matrix4x4
-from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope, GLColorScope
+from kousen.math import Vector3D, Matrix4x4
+from kousen.gl.glutil import GLAttribScope, GLMatrixScope, GLColorScope
 from kousen.gl.gladapter import GLNodeAdapter
-from kousen.scenegraph import SphereNode, CubeNode, CylinderNode, ConeNode, PlaneNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, GridNode, QuadricArrowNode, QuadricGnomonNode
+from kousen.scenegraph import QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, QuadricGnomonNode
 from kousen.math import Matrix4x4
 
-"""
-http://stackoverflow.com/questions/8329546/how-to-use-vertex-buffer-objects-vbo-instead-of-calling-gldrawarrays-thousands
-en.wikibooks.org/wiki/OpenGL_Programming/Scientific_OpenGL_Tutorial_04
-"""
 class GLQuadricSphereAdapter(GLNodeAdapter):
     """
     The GLQuadricSphereAdapter implements a GLNodeAdapter for a SphereNode
@@ -64,28 +56,6 @@ class GLQuadricSphereAdapter(GLNodeAdapter):
         GL.glPopClientAttrib();
         GL.glPopAttrib()
 
-#class GLQuadricArrowAdapter(GLNodeAdapter):
-#    """
-#    The GLQuadricCylinderAdapter implements a GLNodeAdapter for a CylinderNode
-#    """
-#    # Additional Meta Information
-#    __node__ = QuadricArrowNode
-
-#    def paint_enter(self):
-#        """
-#        Implements the GLNodeAdapter's paint_enter method for an OpenGL Render operation.
-#        """
-#        GL.glMatrixMode(GL.GL_MODELVIEW)
-#        GL.glPushMatrix();        
-#        GL.glMultMatrixf(self._node.matrix().data())
-
-#    def paint_exit(self):
-#        """
-#        Implements the GLNodeAdapter's paint_exit method for an OpenGL Render operation.
-#        """
-#        GL.glMatrixMode(GL.GL_MODELVIEW)
-#        GL.glPopMatrix()
-
 class GLGnomonAdapter(GLNodeAdapter):
     """
     The GLGnomonAdapter implements a GLNodeAdapter for a QuadricGnomonNode
@@ -125,6 +95,9 @@ class GLGnomonAdapter(GLNodeAdapter):
                 
                 GL.glRasterPos3fv(self._node.zaxis.data())
                 GLUT.glutBitmapCharacter(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Z'))
+                #curpos = GL.glGetFloatv(GL.GL_CURRENT_RASTER_POSITION)
+                #textWidth = GLUT.glutBitmapWidth(GLUT.GLUT_BITMAP_HELVETICA_12, ord('Z'))
+                #GL.glRasterPos2f(curpos[0],curpos[1])
 
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glPopMatrix()
@@ -183,7 +156,6 @@ class GLQuadricCylinderAdapter(GLNodeAdapter):
         GL.glMultMatrixf(self._node.matrix().data())
         GL.glColor(self._node.color.getRgbF())
         
-
         # The positive Z-axis is the default direction for Cylinder Quadrics in OpenGL.
         # If our vector is not parallel to the z-axis, e.g. (0, 0, Z), then rotate it.
         #   1) Get a normal from the z-v plane

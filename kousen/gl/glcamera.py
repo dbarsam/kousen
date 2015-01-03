@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides class defintions of OpenGL camera node adapters.
+"""
 from OpenGL import GL
-from OpenGL import GLU
-from OpenGL import GLUT
 from kousen.scenegraph import CameraNode
 from kousen.gl.gladapter import GLNodeAdapter
-from kousen.math import Vector3D, Point3D, Matrix4x4
-from kousen.gl.glutil import GLUQuadricScope, GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 
-class GLCameraNode(GLNodeAdapter):
+class GLCameraAdapter(GLNodeAdapter):
     """
-    The GLCameraNode implements a GLNodeAdapter for a CameraNode.
+    The GLCameraAdapter implements a GLNodeAdapter for a CameraNode.
     """
     # Additional Meta Information
     __node__ = CameraNode
@@ -20,7 +19,7 @@ class GLCameraNode(GLNodeAdapter):
 
         @param node The node we are adapting.
         """
-        super(GLCameraNode, self).__init__(node)
+        super(GLCameraAdapter, self).__init__(node)
 
     def resize_enter(self, width, height):
         """

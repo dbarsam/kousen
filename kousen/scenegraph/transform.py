@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides transformation specializations of scene graph nodes.
+
+A Transformation node is a composite node of more transformation component.
+"""
 import math
 from PySide import QtCore
 from kousen.math import Vector3D, Point3D, Matrix4x4

@@ -1,4 +1,8 @@
-from PySide import QtCore, QtGui, QtOpenGL
+# -*- coding: utf-8 -*-
+"""
+This module provides the specializations of an OpenGL.QGLWidget.
+"""
+from PySide import QtCore, QtOpenGL
 from kousen.gl.gltraversal import GLInitializeVisitor, GLResizeVisitor, GLPaintVisitor
 
 class GLWidget(QtOpenGL.QGLWidget):

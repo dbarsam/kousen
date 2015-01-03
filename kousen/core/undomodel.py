@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for extending Qt's undo model.
+"""
 from PySide import QtGui, QtCore
 
 class UndoMacro(object):

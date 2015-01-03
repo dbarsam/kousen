@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for matrix operations.
+"""
+
 import math
 import PySide.QtCore
 from kousen.math.point import Point3D

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
-from PySide import QtCore, QtGui
+"""
+This module provides primitive specializations of object nodes.
+
+A Primitive is a simple geometric shape defined in constructive solid geometry.  See http://en.wikipedia.org/wiki/Geometric_primitive for more information.
+"""
 from kousen.scenegraph.object import ObjectNode
 from kousen.math import Point3D, Vector3D
 
 class PrimitiveNode(ObjectNode):
     """
-    PrimitiveNode provides a base class for all gemetric object implementation of an ObjectNode.
+    PrimitiveNode provides a base class for all geometric object implementation of an ObjectNode.
     """
     # Additional Meta Information
     __category__     = "Primitive Node"

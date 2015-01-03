@@ -1,4 +1,7 @@
-import inspect
+# -*- coding: utf-8 -*-
+"""
+This module provides the base components of OpenGL node adapters.
+"""
 
 class GLNodeAdapter(object):
     """

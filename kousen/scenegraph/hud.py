@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from kousen.math import Matrix4x4
+"""
+This module provides HUD specializations of viewport nodes.
+"""
 from kousen.scenegraph import ViewportNode
 from kousen.scenegraph.quadric import QuadricGnomonNode
 

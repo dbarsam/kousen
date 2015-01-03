@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
-import math
+"""
+This module provides class defintions of OpenGL HUD node adapters.
+"""
 from OpenGL import GL
-from OpenGL import GLU
-from OpenGL import GLUT
 from kousen.scenegraph import CameraHUDNode
-from kousen.scenegraph import QuadricArrowNode
-from kousen.math import Point3D, Vector3D, Matrix4x4
-from kousen.gl.glutil import GLUQuadricScope, GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 from kousen.gl.gladapter import GLNodeAdapter
 
-class GLCameraHUDNode(GLNodeAdapter):
+class GLCameraHUDAdapter(GLNodeAdapter):
     """
-    The GLCameraNode implements a GLNodeAdapter for a CameraHUDNode.
+    The GLCameraHUDAdapter implements a GLNodeAdapter for a CameraHUDNode.
     """
     # Additional Meta Information
     __node__ = CameraHUDNode
@@ -22,7 +19,7 @@ class GLCameraHUDNode(GLNodeAdapter):
 
         @param node The node we are adapting.
         """
-        super(GLCameraHUDNode, self).__init__(node)
+        super(GLCameraHUDAdapter, self).__init__(node)
 
     def reesize_enter(self, width, height):
         """

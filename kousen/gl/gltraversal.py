@@ -1,9 +1,9 @@
-from OpenGL import GL
-from OpenGL import GLU
-
+# -*- coding: utf-8 -*-
+"""
+This module provides the OpenGL specializations of an AbstractSceneGraphVisitor.
+"""
 from kousen.gl.glroot import GLNodeAdapter
 from kousen.scenegraph.scene import AbstractSceneGraphVisitor
-from kousen.math import Matrix4x4
 
 class GLInitializeVisitor(AbstractSceneGraphVisitor):
     """

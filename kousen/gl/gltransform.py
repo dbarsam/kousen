@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides class defintions of OpenGL Transformation node adapters.
+"""
 from OpenGL import GL
 from kousen.scenegraph import TransformationNode
 from kousen.gl.gladapter import GLNodeAdapter
 
-class GLTransformationNode(GLNodeAdapter):
+class GLTransformationAdapter(GLNodeAdapter):
     """
-    The GLTransformationNode implements a GLNodeAdapter for a TransformationNode.
+    The GLTransformationAdapter implements a GLNodeAdapter for a TransformationNode.
     """
     # Additional Meta Information
     __node__ = TransformationNode
@@ -16,7 +19,7 @@ class GLTransformationNode(GLNodeAdapter):
 
         @param node The node we are adapting.
         """
-        super(GLTransformationNode, self).__init__(node)
+        super(GLTransformationAdapter, self).__init__(node)
 
     def paint_enter(self):
         """

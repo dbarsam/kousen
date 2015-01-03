@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-import sys
 import os
 from PySide import QtGui, QtCore
-from kousen.math import Point3D
 from kousen.core.propertymodel import PropertyItem, PropertyModel
-from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel
-from kousen.scenegraph import AbstractSceneGraphModel, VirtualScreen, CameraNode, CameraHUDNode, CubeNode, CylinderNode, ConeNode, GridNode, QuadricSphereNode, QuadricCylinderNode, QuadricConeNode, QuadricArrowNode
+from kousen.core.proxymodel import TreeColumnFilterProxyModel
+from kousen.scenegraph import AbstractSceneGraphModel, VirtualScreen, CameraNode, CameraHUDNode, CubeNode, GridNode
 from kousen.ui.itemdialog import ItemCreationDialog
 from kousen.ui.uiloader import UiLoader
 from kousen.ui.editorfactory import ItemEditorFactoryDelegate

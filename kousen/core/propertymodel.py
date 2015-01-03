@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for implementing a property model.
+"""
 from PySide import QtGui, QtCore
-
-from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataItem, AbstractDataTreeItem, AbstractDataListModel, AbstractDataTreeModel
+from kousen.core.abstractmodel import AbstractData, AbstractDataFields, AbstractDataTreeItem, AbstractDataTreeModel
 
 class AbstractPropertyItem(AbstractDataTreeItem):
     """

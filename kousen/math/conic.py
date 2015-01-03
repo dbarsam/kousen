@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for conic operations.
+"""
 import math
 
 def coniclength(theta, diameter):

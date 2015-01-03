@@ -1,4 +1,8 @@
-from enum import IntEnum, unique
+# -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for extending Qt's various Abstract Data Models.
+"""
+from enum import IntEnum
 from PySide import QtGui, QtCore
 
 class AbstractDataFields(IntEnum):

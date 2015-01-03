@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 from PySide import QtGui, QtCore
-from PySide import QtGui, QtCore
 from kousen.ui.uiloader import UiLoader
 
 __form_class__, __base_class__ = UiLoader.loadUiType(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'messagebox.ui'))

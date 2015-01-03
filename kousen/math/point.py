@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import math
+"""
+This module provides all utility functions and class defintions for point operations.
+"""
 import PySide.QtCore
 
 class Point3D(PySide.QtCore.QObject):

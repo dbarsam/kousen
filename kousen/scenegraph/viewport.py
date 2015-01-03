@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides viewport specializations of scene graph nodes.
+
+A Viewport defines a abstract rectangle, often taking the role of a virtual camera.
+"""
 import abc
 from kousen.scenegraph import SceneGraphNode
 

@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for extending Python native exception functionality.
+"""
 import os
 import sys
 import traceback

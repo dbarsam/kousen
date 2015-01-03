@@ -1,8 +1,10 @@
-from OpenGL import GL
-from OpenGL import GLU
+# -*- coding: utf-8 -*-
+"""
+This module provides class defintions of OpenGL root node adapters.
+"""
 
+from OpenGL import GL
 from kousen.gl.gladapter import GLNodeAdapter
-from kousen.gl.glutil import GLUQuadricScope, GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 from kousen.scenegraph.scene import SceneGraphRoot
 
 class GLRootAdapter(GLNodeAdapter):

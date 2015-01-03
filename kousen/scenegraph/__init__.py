@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+This kousen.scenegraph sub package provides all utility functions and class defintions to implement a scene graph structure as required by kousen.
+"""
 from kousen.scenegraph.scene import (
     SceneGraphRoot,
     SceneGraphNode,

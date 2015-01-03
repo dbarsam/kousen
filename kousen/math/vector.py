@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides all utility functions and class defintions for vector operations.
+"""
 import math
 import PySide.QtCore
 

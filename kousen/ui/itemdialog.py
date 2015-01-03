@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from PySide import QtGui, QtCore
-from kousen.core.proxymodel import ColumnFilterProxyModel, TreeColumnFilterProxyModel, ColumnFilterDataProxyModel
-from kousen.core.abstractmodel import AbstractDataItem, AbstractData, AbstractDataListModel
+from kousen.core.proxymodel import TreeColumnFilterProxyModel
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
 from kousen.ui.uiloader import UiLoader
 from kousen.scenegraph import SceneGraphType, SceneGraphTypeTreeModel
@@ -11,7 +10,6 @@ from kousen.gl.glhud import *
 from kousen.gl.glprimitive import *
 from kousen.gl.glquadric import *
 from kousen.gl.gltransform import *
-from kousen.gl.glutil import GLScope, GLVariableScope, GLAttribScope, GLClientAttribScope, GLMatrixScope
 
 __form_class__, __base_class__ = UiLoader.loadUiType(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'itemdialog.ui'))
 

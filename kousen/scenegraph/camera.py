@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides camera specializations of object nodes.
+"""
 import math
-from PySide import QtGui, QtCore
 from kousen.scenegraph import ObjectNode, VirtualScreen
 from kousen.math import Point3D, Vector3D, Matrix4x4
-from kousen.math.conic import coniclength, conicwidth
+from kousen.math.conic import conicwidth
 
 class CameraNode(ObjectNode, VirtualScreen):
     """

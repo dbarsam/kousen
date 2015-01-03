@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+This module provides object specializations of transformation nodes.
+"""
 from PySide import QtCore, QtGui
 from kousen.scenegraph.transform import TransformationNode
 
