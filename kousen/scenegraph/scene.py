@@ -297,7 +297,6 @@ class SceneGraphType(AbstractDataTreeItem):
         The Fields class provides an enumeration of the various fields within a AbstractSceneGraphItem.
         """
         NAME  = 0
-        CLASS = 1
 
     def __init__(self, sdata={}, parent=None):
         """
@@ -359,7 +358,7 @@ class SceneGraphTypeTreeModel(AbstractDataTreeModel):
         self.beginResetModel()
         self.clear()
 
-        classes = sorted([c for c in AbstractSceneGraphItem.subclasses() if c.__instantiable__], key=(lambda x: x.__category__))
+        classes = sorted([c for c in AbstractSceneGraphItem.subclasses() if c.__instantiable__], key=lambda x: (x.__category__, x.__description__))
         for key, group in groupby(classes, lambda x: x.__category__):
             subroot = self.createItem([key, None], None)
             qindex = self.appendItem(subroot)
