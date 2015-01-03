@@ -224,7 +224,7 @@ class MainWindow(__form_class__, __base_class__):
         menu = QtGui.QMenu()
 
         nodes = self.sceneExplorer.selectedItems
-        cameras = [n for n in nodes if type(n) is GLCameraNode]
+        cameras = [n for n in nodes if type(n) is CameraNode]
         if any(c == self.sceneExplorer.source.activeCamera for c in cameras):
             menu.addAction(self.actionReleasePrimaryCamera)
         if any(c != self.sceneExplorer.source.activeCamera for c in cameras):
