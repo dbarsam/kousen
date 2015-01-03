@@ -15,6 +15,7 @@ class CameraNode(ObjectNode, VirtualScreen):
     __category__     = "Camera Node"
     __icon__         = ":/icons/camera.png"
     __description__  = "Camera"
+    __instantiable__ = True
 
     # Camera default values
     __camera_target__   = Point3D(0, 0, 0)
