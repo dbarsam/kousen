@@ -22,6 +22,7 @@ class QuadricSphereNode(SphereNode):
     QuadricSphereNode extends the SphereNode as a Quadric Surface specialization.
     """
     # Additional Meta Information
+    __category__     = "Quadric Node"
     __description__  = "Quadric Sphere Primitve"
     __instantiable__ = True
 
@@ -80,6 +81,7 @@ class QuadricCylinderNode(CylinderNode):
     QuadricCylinderNode extends the CylinderNode as a Quadric Surface specialization.
     """
     # Additional Meta Information
+    __category__     = "Quadric Node"
     __description__  = "Quadric Cylinder Primitve"
     __instantiable__ = True
 
@@ -160,6 +162,7 @@ class QuadricConeNode(ConeNode):
     QuadricConeNode extends the ConeNode as a Quadric Surface specialization.
     """
     # Additional Meta Information
+    __category__     = "Quadric Node"
     __description__  = "Quadric Cone Primitve"
     __instantiable__ = True
 
@@ -239,6 +242,7 @@ class QuadricArrowNode(ArrowNode):
     ArrowNode implements a primitive composite node.
     """
     # Additional Meta Information
+    __category__     = "Quadric Node"
     __description__  = "Quadric Arrow Primitve"
     __instantiable__ = True
 
@@ -337,6 +341,7 @@ class QuadricGnomonNode(GnomonNode):
     QuadricGnomon implements a primitive composite node.
     """
     # Additional Meta Information
+    __category__     = "Quadric Node"
     __description__  = "Quadric Gnomon Primitve"
     __instantiable__ = True
 
